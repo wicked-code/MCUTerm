@@ -1,0 +1,255 @@
+﻿<Window x:Class="MCUTerm.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MCUTerm"
+        xmlns:theme="clr-namespace:ModenTheme"
+        mc:Ignorable="d"
+        Title="Terminal Settings" Width="420"
+        SizeToContent="Height"
+        FontFamily="Consolas"
+        FontSize="12"
+        Foreground="{StaticResource ForegroundBrush}"
+        WindowStartupLocation="CenterOwner"
+        Style="{StaticResource WindowStyle}"
+        theme:Ext.IsToolWindow="True"
+        Icon="{x:Null}" theme:Ext.Image="{StaticResource Icon.GearLight}"
+        >
+    <Window.Resources>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+        <Style x:Key="List.Button" TargetType="Border">
+            <Setter Property="Height" Value="16"/>
+            <Setter Property="Width" Value="16"/>
+            <Setter Property="Padding" Value="3"/>
+            <Setter Property="Background" Value="{StaticResource ListBox.Static.Background}"/>
+            <EventSetter Event="MouseLeftButtonDown" Handler="Border_MouseLeftButtonDown"/>
+            <EventSetter Event="MouseLeftButtonUp" Handler="Border_MouseLeftButtonUp"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Padding" Value="1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="List.ButtonImage" TargetType="ContentControl">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentControl}}, Path=Padding}"/>
+        </Style>
+        <Style x:Key="ListItemStyle" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource ListBoxItemStyle}">
+            <Setter Property="Padding" Value="0"/>
+            <EventSetter Event="KeyUp" Handler="ListBoxItem_KeyUp"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="Bd"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="true"
+                            RenderOptions.ClearTypeHint="Enabled">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="LabelHint" TargetType="{x:Type Label}" BasedOn="{StaticResource {x:Type Label}}">
+            <Setter Property="Visibility" Value="Hidden"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Foreground" Value="{StaticResource ComboBox.Disabled.Glyph}"/>
+        </Style>
+        <Style x:Key="NewBaudHint" TargetType="{x:Type Label}" BasedOn="{StaticResource LabelHint}">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="1"/>
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Text.IsEmpty, Source={x:Reference NewBaudBox}}" Value="True"/>
+                        <Condition Binding="{Binding IsKeyboardFocusWithin, Source={x:Reference NewBaudBox}}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Visibility" Value="Visible"/>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="FileNameHint" TargetType="{x:Type Label}" BasedOn="{StaticResource LabelHint}">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Source={StaticResource Settings}, Path=Default.LogFileName.IsEmpty}" Value="True"/>
+                        <Condition Binding="{Binding IsKeyboardFocusWithin, Source={x:Reference LogFileName}}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Visibility" Value="Visible"/>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Background="{StaticResource BackgroundBrush}" KeyboardNavigation.TabNavigation="Cycle">
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <Label Style="{StaticResource Label.Header}">Behaviour</Label>
+            <Grid Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="110"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="110"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label>At Startup</Label>
+                <ComboBox Grid.Column="1" SelectedIndex="{Binding Source={StaticResource Settings}, Path=Default.AtStartupIndex}">
+                    <ComboBoxItem>None</ComboBoxItem>
+                    <ComboBoxItem>Connect</ComboBoxItem>
+                </ComboBox>
+                <Label Grid.Column="2">After Connect</Label>
+                <ComboBox Grid.Column="3" SelectedIndex="{Binding Source={StaticResource Settings}, Path=Default.AfterConnectIndex}">
+                    <ComboBoxItem>None</ComboBoxItem>
+                    <ComboBoxItem>Clear Output</ComboBoxItem>
+                </ComboBox>
+            </Grid>
+            <Label Style="{StaticResource Label.Header}">Port Configuration</Label>
+            <Grid Margin="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="110"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="110"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label>Data Bits</Label>
+                <ComboBox Grid.Column="1" SelectedIndex="{Binding Source={StaticResource Settings}, Path=Default.DataBitsIndex}">
+                    <ComboBoxItem>5</ComboBoxItem>
+                    <ComboBoxItem>6</ComboBoxItem>
+                    <ComboBoxItem>7</ComboBoxItem>
+                    <ComboBoxItem>8</ComboBoxItem>
+                </ComboBox>
+                <Label Grid.Row="1">Parity</Label>
+                <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding Source={StaticResource Settings}, Path=Default.ParityIndex}">
+                    <ComboBoxItem>None</ComboBoxItem>
+                    <ComboBoxItem>Odd</ComboBoxItem>
+                    <ComboBoxItem>Even</ComboBoxItem>
+                    <ComboBoxItem>Mark</ComboBoxItem>
+                    <ComboBoxItem>Space</ComboBoxItem>
+                </ComboBox>
+                <Label Grid.Column="2">Stop Bits</Label>
+                <ComboBox Grid.Column="3" SelectedIndex="{Binding Source={StaticResource Settings}, Path=Default.StopBitsIndex}">
+                    <ComboBoxItem>0</ComboBoxItem>
+                    <ComboBoxItem>1</ComboBoxItem>
+                    <ComboBoxItem>2</ComboBoxItem>
+                    <ComboBoxItem>1.5</ComboBoxItem>
+                </ComboBox>
+                <Label Grid.Row="1" Grid.Column="2">Send Postfix</Label>
+                <ComboBox Grid.Row="1" Grid.Column="3" SelectedIndex="{Binding Source={StaticResource Settings}, Path=Default.SendPostfixIndex}">
+                    <ComboBoxItem>Nothing</ComboBoxItem>
+                    <ComboBoxItem>CR</ComboBoxItem>
+                    <ComboBoxItem>LF</ComboBoxItem>
+                    <ComboBoxItem>CR-LF</ComboBoxItem>
+                </ComboBox>
+                <Label Grid.Row="2">Handshake</Label>
+                <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" SelectedIndex="{Binding Source={StaticResource Settings}, Path=Default.HandshakeIndex}">
+                    <ComboBoxItem>None</ComboBoxItem>
+                    <ComboBoxItem>XOnXOff</ComboBoxItem>
+                    <ComboBoxItem>RequestToSend</ComboBoxItem>
+                    <ComboBoxItem>RequestToSendXOnXOff</ComboBoxItem>
+                </ComboBox>
+            </Grid>
+            <Label Style="{StaticResource Label.Header}">Baud Rates</Label>
+            <ListBox Margin="6" Name="BoudRatesList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.IsSharedSizeScope="True"
+                     ItemContainerStyle="{StaticResource ListItemStyle}"
+            >
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="GroupColumn"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Style="{StaticResource List.Button}">
+                                    <ContentControl Style="{StaticResource List.ButtonImage}" Content="{StaticResource Icon.Delete}"/>
+                                </Border>
+                                <TextBlock Margin="2,1" VerticalAlignment="Center" Text="{Binding}"/>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemsSource>
+                    <CompositeCollection>
+                        <ListBoxItem Name="AddBaudItem">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition SharedSizeGroup="GroupColumn"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Style="{StaticResource List.Button}">
+                                        <ContentControl Style="{StaticResource List.ButtonImage}" Content="{StaticResource Icon.Add}"/>
+                                    </Border>
+                                    <Grid Margin="2,0,0,0">
+                                        <TextBox Name="NewBaudBox" Padding="0" MinHeight="0" Validation.ErrorTemplate="{x:Null}" KeyUp="NewBaudBox_KeyUp">
+                                            <TextBox.Text>
+                                                <Binding Path="BaudRate" UpdateSourceTrigger="PropertyChanged">
+                                                    <Binding.ValidationRules>
+                                                        <local:BaudRateRule/>
+                                                    </Binding.ValidationRules>
+                                                </Binding>
+                                            </TextBox.Text>
+                                        </TextBox>
+                                        <Label Style="{StaticResource NewBaudHint}" Content="New Baud"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </ListBoxItem>
+                        <CollectionContainer Collection="{Binding Source={StaticResource Settings}, Path=Default.BaudList}"/>
+                    </CompositeCollection>
+                </ListBox.ItemsSource>
+            </ListBox>
+            <Label Style="{StaticResource Label.Header}">Log File</Label>
+            <DockPanel Margin="1">
+                <Button DockPanel.Dock="Right" Padding="3,0" Width="{StaticResource Button.DefaulWidth}" Click="SelectLog_Click"
+                    Style="{StaticResource ImageButton}"
+                        theme:Ext.Image="{StaticResource Icon.OpenFileFolder}"
+                        Content="Select"/>
+                <Grid Margin="2,0,0,0">
+                    <TextBox Name="LogFileName" Text="{Binding Source={StaticResource Settings}, Path=Default.LogFileName}" Margin="5"/>
+                    <Label Style="{StaticResource FileNameHint}" Content="File Name"/>
+                </Grid>
+            </DockPanel>
+        </StackPanel>
+        <Border Grid.Row="1">
+            <DockPanel Margin="1,2" LastChildFill="False">
+                <Button Width="{StaticResource Button.DefaulWidth}" Margin="5" DockPanel.Dock="Right" IsCancel="True">Cancel</Button>
+                <Button Width="{StaticResource Button.DefaulWidth}" Margin="5" DockPanel.Dock="Right" Click="Button_OK_Click">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="IsDefault" Value="True"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text.IsEmpty, Source={x:Reference NewBaudBox}}" Value="False">
+                                    <Setter Property="IsDefault" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    Ok
+                </Button>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

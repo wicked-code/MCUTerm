@@ -1,0 +1,31 @@
+﻿<Application x:Class="MCUTerm.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MCUTerm"
+             xmlns:properties="clr-namespace:MCUTerm.Properties"
+             StartupUri="MainWindow.xaml"
+             Exit="Application_Exit"
+             Startup="Application_Startup">
+    <Application.Resources>
+        <ResourceDictionary>
+            <properties:Settings x:Key="Settings"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Icons.xaml"/>
+                <ResourceDictionary Source="/Theme/BorderEx.xaml"/>
+                <ResourceDictionary Source="/Theme/Tooltip.xaml"/>
+                <ResourceDictionary Source="/Theme/Button.xaml"/>
+                <ResourceDictionary Source="/Theme/ToggleButton.xaml"/>
+                <ResourceDictionary Source="/Theme/ImageButton.xaml"/>
+                <ResourceDictionary Source="/Theme/ImageToggleButton.xaml"/>
+                <ResourceDictionary Source="/Theme/Separator.xaml"/>
+                <ResourceDictionary Source="/Theme/Label.xaml"/>
+                <ResourceDictionary Source="/Theme/TextBox.xaml"/>
+                <ResourceDictionary Source="/Theme/TextBlockEx.xaml"/>
+                <ResourceDictionary Source="/Theme/ComboBox.xaml"/>
+                <ResourceDictionary Source="/Theme/ListBox.xaml"/>
+                <ResourceDictionary Source="/Theme/ScrollViewer.xaml"/>
+                <ResourceDictionary Source="/Theme/Window.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

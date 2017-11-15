@@ -1,0 +1,194 @@
+﻿<Window x:Class="MCUTerm.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:theme="clr-namespace:ModenTheme"
+        xmlns:controls="clr-namespace:MCUTerm.Controls"
+        mc:Ignorable="d"
+        Left="{Binding Source={StaticResource Settings}, Path=Default.MainWindowLeft, Mode=TwoWay}"
+        Top="{Binding Source={StaticResource Settings}, Path=Default.MainWindowTop, Mode=TwoWay}"
+        Width="{Binding Source={StaticResource Settings}, Path=Default.MainWindowWidth, Mode=TwoWay}"
+        Height="{Binding Source={StaticResource Settings}, Path=Default.MainWIndowHeight, Mode=TwoWay}"
+        FocusManager.FocusedElement="{Binding ElementName=SendText}"
+        MinHeight="300"
+        MinWidth="600"
+        SizeToContent="Width"
+        FontFamily="Consolas"
+        FontSize="12"
+        Icon="/Resources/terminal.png"
+        Foreground="{StaticResource ForegroundBrush}"
+        Style="{StaticResource WindowStyle}"
+        Loaded="Window_Loaded"
+        SizeChanged="Window_SizeChanged"
+        Topmost="{Binding Source={StaticResource Settings}, Path=Default.StayOnTop}"
+        >
+    <Window.Resources>
+        <Style x:Key="Ribon.SectionName" TargetType="TextBlock">
+            <Setter Property="Margin" Value="6,0"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{StaticResource GlyphColorBrush}"/>
+        </Style>
+    </Window.Resources>
+    <Grid Background="{StaticResource BackgroundBrush}" KeyboardNavigation.TabNavigation="Cycle">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Border>
+            <StackPanel Margin="4,3,4,1" Height="{StaticResource Ribon.Height}" Orientation="Horizontal">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="{Binding Source={StaticResource Element.Height}}"></RowDefinition>
+                        <RowDefinition Height="{Binding Source={StaticResource Element.Height}}"></RowDefinition>
+                        <RowDefinition Height="{Binding Source={StaticResource Element.Height}}"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource Ribon.SectionName}">Control</TextBlock>
+                    <Button Grid.RowSpan="3" Style="{StaticResource Ribon.BigImageButton}" Click="ClearButton_Click"
+                        theme:Ext.Image="{StaticResource Icon.Clear}"
+                        Content="Clear&#x0a;Output"/>
+                    <Button Name="ConnectButton" Grid.Column="1" Style="{StaticResource Ribon.ImageButton}" Click="ConnectButton_Click"
+                        theme:Ext.Image="{StaticResource Icon.Connect}"
+                        theme:Ext.DisabledImage="{StaticResource Icon.ConnectDisabled}"
+                        Content="Connect"/>
+                    <Button Name="RestartButton" Grid.Row="1" Grid.Column="1" Style="{StaticResource Ribon.ImageButton}" Click="RestartButton_Click"
+                        theme:Ext.Image="{StaticResource Icon.RestartRed}"
+                        theme:Ext.DisabledImage="{StaticResource Icon.RestartDisabled}"
+                        Content="Reset"/>
+                    <Button Name="DisconnectButton" Grid.Row="2" Grid.Column="1" Style="{StaticResource Ribon.ImageButton}" Click="StopButton_Click"
+                        theme:Ext.Image="{StaticResource Icon.Disconnect}"
+                        theme:Ext.DisabledImage="{StaticResource Icon.DisconnectDisabled}"
+                        Content="Disconnect"/>
+                </Grid>
+                <Separator Style="{StaticResource VerticalSeparatorStyle}"></Separator>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"></RowDefinition>
+                        <RowDefinition Height="1*"></RowDefinition>
+                        <RowDefinition Height="{Binding Source={StaticResource Ribon.Caption.Height}}"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="2" Style="{StaticResource Ribon.SectionName}">Filter</TextBlock>
+                    <TextBox Name="Filter" TabIndex="3" ToolTip="Type words to search for" VerticalAlignment="Center" KeyUp="Filter_KeyUp"/>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <ToggleButton Style="{StaticResource Ribon.ImageToggleButton}"
+                                      IsChecked="{Binding Source={StaticResource Settings}, Path=Default.FilterMatchCase}"
+                                      theme:Ext.Image="{StaticResource Icon.MatchCase}"
+                                      ToolTip="Case Sensitive"/>
+                        <ToggleButton Style="{StaticResource Ribon.ImageToggleButton}"
+                                      IsChecked="{Binding Source={StaticResource Settings}, Path=Default.DisableFilter}"
+                                      theme:Ext.Image="{StaticResource Icon.DisableFilter}"
+                                      ToolTip="Disable Filter"/>
+                        <ToggleButton Style="{StaticResource Ribon.ImageToggleButton}"
+                                      IsChecked="{Binding Source={StaticResource Settings}, Path=Default.EnableHighlight}"
+                                      theme:Ext.Image="{StaticResource Icon.Highlight}"
+                                      ToolTip="Highlight Text"/>
+                        <ToggleButton Style="{StaticResource Ribon.ImageToggleButton}"
+                                      IsChecked="{Binding Source={StaticResource Settings}, Path=Default.WordWrap}"
+                                      theme:Ext.Image="{StaticResource Icon.WordWrap}"
+                                      ToolTip="Word Wrap"/>
+                    </StackPanel>
+                </Grid>
+                <Separator Style="{StaticResource VerticalSeparatorStyle}"></Separator>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="{Binding Source={StaticResource Element.Height}}"></RowDefinition>
+                        <RowDefinition Height="{Binding Source={StaticResource Element.Height}}"></RowDefinition>
+                        <RowDefinition Height="{Binding Source={StaticResource Element.Height}}"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource Ribon.SectionName}">View</TextBlock>
+                    <ToggleButton Grid.RowSpan="3" Style="{StaticResource Ribon.BigImageToggleButton}"
+                                  IsChecked="{Binding Source={StaticResource Settings}, Path=Default.AutoScroll}"
+                                  theme:Ext.Image="{StaticResource Icon.AutoScroll}"
+                                  Content="Auto&#x0a;Scroll"/>
+                    <ToggleButton Grid.Column="1" Style="{StaticResource Ribon.ImageToggleButton}"
+                                  IsChecked="{Binding Source={StaticResource Settings}, Path=Default.StayOnTop}"
+                                  theme:Ext.Image="{StaticResource Icon.TopMost}"
+                                  Content="Stay on Top"/>
+                    <ToggleButton Grid.Row="1" Grid.Column="1" Style="{StaticResource Ribon.ImageToggleButton}"
+                                  IsChecked="{Binding Source={StaticResource Settings}, Path=Default.LocalEcho}"
+                                  theme:Ext.Image="{StaticResource Icon.LocalEcho}"
+                                  Content="Local Echo"/>
+                    <ToggleButton Grid.Row="2" Grid.Column="1" Style="{StaticResource Ribon.ImageToggleButton}"
+                                  IsChecked="{Binding Source={StaticResource Settings}, Path=Default.HexOutput}"
+                                  theme:Ext.Image="{StaticResource Icon.Hex}"
+                                  Content="Hex Output"/>
+                </Grid>
+                <Separator Style="{StaticResource VerticalSeparatorStyle}"></Separator>
+                <Grid MinWidth="72">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"></RowDefinition>
+                        <RowDefinition Height="1*"></RowDefinition>
+                        <RowDefinition Height="{Binding Source={StaticResource Ribon.Caption.Height}}"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="2" Style="{StaticResource Ribon.SectionName}">Port</TextBlock>
+                    <ComboBox Name="PortList" TabIndex="4" ToolTip="COM Port" VerticalAlignment="Center" SelectionChanged="PortList_SelectionChanged"/>
+                    <ComboBox Grid.Row="1" TabIndex="5" VerticalAlignment="Center"
+                              SelectedValue="{Binding Source={StaticResource Settings}, Path=Default.BaudRate}"
+                              ItemsSource="{Binding Source={StaticResource Settings}, Path=Default.BaudList}"
+                              ToolTip="Baud Rate"/>
+                </Grid>
+                <Separator Style="{StaticResource VerticalSeparatorStyle}"></Separator>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"></RowDefinition>
+                        <RowDefinition Height="{Binding Source={StaticResource Ribon.Caption.Height}}"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="1" Style="{StaticResource Ribon.SectionName}">Options</TextBlock>
+                    <Button Style="{StaticResource Ribon.BigImageButton}" Click="OptionsButton_Click"
+                        theme:Ext.Image="{StaticResource Icon.Gear}"
+                        Content=""/>
+                </Grid>
+            </StackPanel>
+        </Border>
+        <controls:BorderEx Grid.Row="1" Margin="5,0">
+            <ScrollViewer Name="ConsoleTextScroll" VerticalScrollBarVisibility="Auto" Focusable="False">
+                <ScrollViewer.Style>
+                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource {x:Type ScrollViewer}}">
+                        <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Source={StaticResource Settings}, Path=Default.WordWrap}" Value="True">
+                                <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ScrollViewer.Style>
+                <controls:TextBlockEx x:Name="ConsoleText" TabIndex="6"
+                                      HighlightedText="{Binding Text, ElementName=Filter}"
+                                      MatchCaseHighlighted="{Binding Source={StaticResource Settings}, Path=Default.FilterMatchCase}"
+                                      DisableFilterHighlighted="{Binding Source={StaticResource Settings}, Path=Default.DisableFilter}"
+                                      EnableHighlight="{Binding Source={StaticResource Settings}, Path=Default.EnableHighlight}"
+                                      TextWrapping="Wrap"
+                                      KeyUp="ConsoleText_KeyUp"
+                                      />
+            </ScrollViewer>
+        </controls:BorderEx>
+        <Border Grid.Row="2" Padding="7,3">
+            <DockPanel>
+                <Label Target="{Binding ElementName=SendText}">_Input</Label>
+                <Button Name="SendFileButton" DockPanel.Dock="Right" TabIndex="2" Click="SendFileButton_Click"
+                        Style="{StaticResource ImageButton}"
+                        theme:Ext.Image="{StaticResource Icon.SendFile}"
+                        theme:Ext.DisabledImage="{StaticResource Icon.SendFileDisabled}"
+                        Content="Send File"/>
+                <Button Name="SendButton" DockPanel.Dock="Right" TabIndex="1" Click="SendButton_Click"
+                        Style="{StaticResource ImageButton}"
+                        theme:Ext.Image="{StaticResource Icon.SendCmd}"
+                        theme:Ext.DisabledImage="{StaticResource Icon.SendCmdDisabled}"
+                        Content="Send"/>
+                <TextBox Name="SendText" Margin="5" VerticalContentAlignment="Center" TabIndex="0" KeyUp="SendText_KeyUp"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

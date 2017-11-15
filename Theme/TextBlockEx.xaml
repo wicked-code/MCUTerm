@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:MCUTerm.Controls">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style TargetType="controls:TextBlockEx" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="SelectionBackground" Value="{StaticResource TextBox.Selection.Background}"/>
+        <Setter Property="HighlightBackground" Value="{StaticResource TextBox.Highlight.Background}"/>
+    </Style>
+
+</ResourceDictionary>
