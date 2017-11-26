@@ -23,6 +23,8 @@ namespace MCUTerm
         private SerialPort serialPort = new SerialPort();
         private List<string> availablePorts = new List<string>();
 
+        private string pendingText = "";
+
         private string status;
         private string Status
         {
@@ -64,6 +66,12 @@ namespace MCUTerm
                 DisconnectButton.IsEnabled = false;
                 SendButton.IsEnabled = false;
                 SendFileButton.IsEnabled = false;
+            }
+
+            if (pendingText.Length > 0)
+            {
+                AppendConsole(pendingText);
+                pendingText = "";
             }
         }
 
@@ -237,7 +245,7 @@ namespace MCUTerm
             }
 
             // BeginInvoke is used because Invoke may result in deadlock (serialPort.Close() in main thread during invoke)
-            Application.Current.Dispatcher.BeginInvoke(new Action(() => UpdateConsole(received)));
+            Application.Current.Dispatcher.BeginInvoke(new Action(() => pendingText += received) );
 
             try
             {
@@ -264,13 +272,13 @@ namespace MCUTerm
                 Properties.Settings.Default.LogFileName = "";
         }
 
-        private void UpdateConsole(string text)
+        private void AppendConsole(string text)
         {
             string selection = ConsoleText.SelectedText;
             int selectionStart = ConsoleText.SelectionStart;
             int selectionLength = ConsoleText.SelectionLength;
 
-            UpdateConsoleText(text);
+            AppendConsoleText(text);
 
             if (selectionLength > 0 && ConsoleText.Text.Length >= (selectionStart + selectionLength) &&
                 ConsoleText.Text.Substring(selectionStart, selectionLength) == selection)
@@ -291,7 +299,7 @@ namespace MCUTerm
                 "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB",
                 "ESC", "FS", "GS", "RS", "US", "Space"};
 
-        private void UpdateConsoleText(string text)
+        private void AppendConsoleText(string text)
         {
             bool hexOutput = Properties.Settings.Default.HexOutput;
 
