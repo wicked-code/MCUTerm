@@ -226,7 +226,7 @@ namespace MCUTerm
 
         private void SerialPort_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
-            Status = "Connection Error";
+            Application.Current.Dispatcher.BeginInvoke(new Action(() => Status = "Connection Error"));
         }
 
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs args)
