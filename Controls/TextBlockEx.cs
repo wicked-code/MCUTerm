@@ -1,21 +1,129 @@
 ﻿using System.Windows;
-using System.Windows.Input;
 using System.Windows.Controls;
-using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Windows.Markup;
+using System.Globalization;
+using System.Windows.Controls.Primitives;
 
 namespace MCUTerm.Controls
 {
-    public partial class TextBlockEx : TextBlock
+    public partial class TextBlockEx : Control
     {
+        protected class GlyphHelper
+        {
+            protected GlyphTypeface glyphTypeface;
+            protected IDictionary<int, ushort> glyphIndexMap;
+            protected Dictionary<ushort, double> glyphAdvanceWidthMap = new Dictionary<ushort, double>();
+
+            protected static MethodInfo glyphTryCreate;
+
+            protected double width;
+            protected double height;
+            protected double baseline;
+            protected double fontSize;
+            protected double dpiScaleX;
+
+            public double Baseline => baseline;
+            public double Width => width;
+            public double Height => height;
+
+            public GlyphHelper(FontFamily fontFamily, FontStyle style, FontWeight weight, FontStretch stretch, double fontSize, double dpiScaleX)
+            {
+                this.fontSize = fontSize;
+                this.dpiScaleX = dpiScaleX;
+
+                Typeface typeface = new Typeface(fontFamily, style, weight, stretch);
+                if (!typeface.TryGetGlyphTypeface(out glyphTypeface) ||
+                    !(new System.Drawing.FontFamily(fontFamily.Source).IsStyleAvailable(System.Drawing.FontStyle.Regular)))
+                {
+                    throw new Exception("Invalid Font Selected.");
+                }
+
+                glyphIndexMap = glyphTypeface.CharacterToGlyphMap;
+
+                width = Math.Round(glyphTypeface.AdvanceWidths['w'] * fontSize * dpiScaleX, MidpointRounding.ToEven) / dpiScaleX;
+                height = Math.Round(glyphTypeface.Height * fontSize * dpiScaleX, MidpointRounding.ToEven) / dpiScaleX;
+                baseline = Math.Round(glyphTypeface.Baseline * fontSize * dpiScaleX, MidpointRounding.ToEven) / dpiScaleX;
+
+                glyphTryCreate = typeof(GlyphRun).GetMethod("TryCreate", BindingFlags.Static | BindingFlags.NonPublic, null,
+                    new[] { typeof(GlyphTypeface), typeof(Int32), typeof(Boolean), typeof(Double), typeof(Single), typeof(IList<ushort>),
+                        typeof(Point), typeof(IList<double>), typeof(IList<Point>), typeof(IList<char>), typeof(String),
+                        typeof(IList<ushort>), typeof(IList<bool>), typeof(XmlLanguage), typeof(TextFormattingMode) }, null);
+            }
+
+            public ushort GetGlyphIndex(int symbol)
+            {
+                return glyphIndexMap[symbol];
+            }
+
+            public GlyphRun CreateGlyphRun(Point point, IList<ushort> indices, IList<double> widths)
+            {
+                if (glyphTryCreate == null)
+                    return new GlyphRun(glyphTypeface, 0, false, fontSize, (float)dpiScaleX, indices, point, widths, null, null, null, null, null, null);
+
+                return (GlyphRun)glyphTryCreate.Invoke(null, new object[] { glyphTypeface, 0, false, fontSize, (float)dpiScaleX, indices, point, widths,
+                    null, null, null, null, null, null, TextFormattingMode.Display });
+            }
+        }
+
+        protected class Glyph
+        {
+            public ushort glyphIndex;
+            public Brush background;
+            public Brush foreground;
+            public bool highlighted;
+            public bool selected;
+            public char symbol;
+        }
+
+        protected class Row
+        {
+            public List<Glyph> glyphs = new List<Glyph>();
+
+            public int TextLength => glyphs.Count() + 1; // + '\n'
+
+            public void Add(char symbol, ushort glyphIndex, Brush foreground, Brush background)
+            {
+                Glyph glyph = new Glyph
+                {
+                    symbol = symbol,
+                    glyphIndex = glyphIndex,
+                    background = background,
+                    foreground = foreground,
+                    selected = false,
+                    highlighted = false
+                };
+
+                glyphs.Add(glyph);
+            }
+        }
+
+        private VisualCollection _visuals;
+        private ScrollBar _hScroll;
+        private ScrollBar _vScroll;
+
+        protected int _verticalOffset;
+        protected int _horizontalOffset;
+        protected int _maxWidth;
+
+        protected GlyphHelper glyphHelper;
+
+        protected string text;
+        protected List<Row> rows;
+
+        protected string originalText;
+        protected List<Row> originalRows = new List<Row>();
+
+        public string Text => text;
+
         protected int selectionStart;
         protected int selectionLength;
         protected string selectedText;
-
-        protected List<Run> runList = new List<Run>();
 
         public string HighlightedText
         {
@@ -57,6 +165,7 @@ namespace MCUTerm.Controls
           DependencyProperty.Register("MatchCaseHighlighted", typeof(bool), typeof(TextBlockEx),
                                       new FrameworkPropertyMetadata(true, OnHighlightTextChanged));
 
+
         public Brush SelectionBackground
         {
             get => (Brush)base.GetValue(SelectionBackgroundProperty);
@@ -65,7 +174,7 @@ namespace MCUTerm.Controls
 
         public static readonly DependencyProperty SelectionBackgroundProperty =
           DependencyProperty.Register("SelectionBackground", typeof(Brush), typeof(TextBlockEx),
-                                      new FrameworkPropertyMetadata((Brush)null, OnSelectionBrushChanged));
+                                      new FrameworkPropertyMetadata((Brush)null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public Brush SelectionForeground
         {
@@ -75,7 +184,7 @@ namespace MCUTerm.Controls
 
         public static readonly DependencyProperty SelectionForegroundProperty =
           DependencyProperty.Register("SelectionForeground", typeof(Brush), typeof(TextBlockEx),
-                                      new FrameworkPropertyMetadata((Brush)null, OnSelectionBrushChanged));
+                                      new FrameworkPropertyMetadata((Brush)null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public Brush HighlightBackground
         {
@@ -85,7 +194,7 @@ namespace MCUTerm.Controls
 
         public static readonly DependencyProperty HighlightBackgroundProperty =
           DependencyProperty.Register("HighlightBackground", typeof(Brush), typeof(TextBlockEx),
-                                      new FrameworkPropertyMetadata((Brush)null, OnHighlightTextChanged));
+                                      new FrameworkPropertyMetadata((Brush)null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public Brush HighlightForeground
         {
@@ -95,16 +204,24 @@ namespace MCUTerm.Controls
 
         public static readonly DependencyProperty HighlightForegroundProperty =
           DependencyProperty.Register("HighlightForeground", typeof(Brush), typeof(TextBlockEx),
-                                      new FrameworkPropertyMetadata((Brush)null, OnHighlightTextChanged));
+                                      new FrameworkPropertyMetadata((Brush)null, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public int TabIndex
+        /// <summary>
+        /// The TextWrapping property controls whether or not text wraps
+        /// when it reaches the flow edge of its containing block box.
+        /// </summary>
+        public TextWrapping TextWrapping
         {
-            get { return (int)GetValue(TabIndexProperty); }
-            set { SetValue(TabIndexProperty, value); }
+            get { return (TextWrapping)GetValue(TextWrappingProperty); }
+            set { SetValue(TextWrappingProperty, value); }
         }
 
-        public static readonly DependencyProperty TabIndexProperty =
-            KeyboardNavigation.TabIndexProperty.AddOwner(typeof(TextBlockEx));
+        /// <summary>
+        /// DependencyProperty for <see cref="TextWrapping" /> property.
+        /// </summary>
+        public static readonly DependencyProperty TextWrappingProperty =
+            DependencyProperty.Register("TextWrapping", typeof(TextWrapping), typeof(TextBlockEx),
+                                        new FrameworkPropertyMetadata(TextWrapping.NoWrap, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public string SelectedText
         {
@@ -126,6 +243,8 @@ namespace MCUTerm.Controls
         public TextBlockEx() : base()
         {
             Focusable = true;
+            rows = originalRows;
+            selectedText = "";
 
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy,
                 (sender, e) => { Clipboard.SetText(((TextBlockEx)sender).SelectedText); },
@@ -136,13 +255,28 @@ namespace MCUTerm.Controls
                 (sender, e) => { ((TextBlockEx)sender).Select(0, ((TextBlockEx)sender).Text.Length); },
                 (sender, e) => { e.CanExecute = ((TextBlockEx)sender).Text.Length > 0; }
             ));
+
+            _maxWidth = 0;
+            _verticalOffset = 0;
+            _horizontalOffset = 0;
+
+            _hScroll = new ScrollBar();
+            _vScroll = new ScrollBar();
+            _hScroll.Orientation = Orientation.Horizontal;
+            _vScroll.Orientation = Orientation.Vertical;
+            _hScroll.ValueChanged += OnHScrollValueChanged;
+            _vScroll.ValueChanged += OnVScrollValueChanged;
+
+            _visuals = new VisualCollection(this);
+            _visuals.Add(_hScroll);
+            _visuals.Add(_vScroll);
         }
 
         public void ClearText()
         {
-            runList.Clear();
+            rows.Clear();
             UpdateSelection(0, 0);
-            UpdateContent();
+            InvalidateVisual();
         }
 
         public void AddText(string text)
@@ -150,20 +284,50 @@ namespace MCUTerm.Controls
             AddText(text, null, null);
         }
 
+        const int TabSize = 4;
         public void AddText(string text, Brush background, Brush foreground)
         {
             if (text.Length == 0)
                 return;
 
-            Run run = runList.LastOrDefault();
-            if (run == null || run.Background != background || run.Foreground != foreground)
+            double dpiScaleX = VisualTreeHelper.GetDpi(this).DpiScaleX;
+            if (glyphHelper == null)
+                glyphHelper = new GlyphHelper(FontFamily, FontStyle, FontWeight, FontStretch, FontSize, dpiScaleX);
+
+            if (originalRows.Count() == 0)
+                originalRows.Add(new Row());
+
+            int pos = 0;
+            while (pos < text.Length)
             {
-                run = CreateRun(text, background, foreground);
-                runList.Add(run);
-            }
-            else
-            {
-                run.Text += text;
+                char symbol = text[pos++];
+                if (symbol == '\r' || symbol == '\n')
+                {
+                    originalRows.Add(new Row());
+                    originalText += '\n';
+
+                    if (pos < text.Length && symbol != text[pos] &&
+                        (text[pos] == '\n' || text[pos] != '\r'))
+                    {
+                        pos++;
+                    }
+
+                    continue;
+                }
+
+                int repeat = 1;
+                if (symbol == '\t')
+                {
+                    repeat = ((TabSize - originalRows.Last().glyphs.Count() % TabSize) & 0x03) + 1;
+                    symbol = ' ';
+                }
+
+                while (repeat > 0)
+                {
+                    originalRows.Last().Add(symbol, glyphHelper.GetGlyphIndex(symbol), background, foreground);
+                    originalText += symbol;
+                    repeat--;
+                }
             }
 
             UpdateContent();
@@ -175,6 +339,134 @@ namespace MCUTerm.Controls
                 return;
 
             UpdateSelection(start, length);
+        }
+
+        public void ScrollToBottom()
+        {
+            if (_vScroll.ViewportSize > 0 && _vScroll.Maximum < rows.Count())
+                _vScroll.Value = Math.Max(0, rows.Count() - _vScroll.ViewportSize);
+        }
+
+        protected override int VisualChildrenCount
+        {
+            get => _visuals.Count;
+        }
+
+        protected override Visual GetVisualChild(int index)
+        {
+            return _visuals[index];
+        }
+
+        protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
+        {
+            Point pt = hitTestParameters.HitPoint;
+
+            if (pt.X >= 0 && pt.X < (ActualWidth - _vScroll.ActualWidth) && pt.Y >= 0 && pt.Y < (ActualHeight - _hScroll.ActualHeight))
+            {
+                return new PointHitTestResult(this, pt);
+            }
+
+            return base.HitTestCore(hitTestParameters);
+        }
+
+        protected override Size MeasureOverride(Size constraint)
+        {
+            _hScroll.Measure(constraint);
+            _vScroll.Measure(constraint);
+
+            Size hSize = _hScroll.DesiredSize;
+            Size vSize = _vScroll.DesiredSize;
+            return new Size(hSize.Width + vSize.Width, hSize.Height + vSize.Height);
+        }
+
+        protected override Size ArrangeOverride(Size arrangeBounds)
+        {
+            if (glyphHelper != null)
+            {
+                double newHViewportSize = (int)((arrangeBounds.Width - _vScroll.DesiredSize.Width) / glyphHelper.Width);
+                double newVViewportSize = (int)((arrangeBounds.Height - _hScroll.DesiredSize.Height) / glyphHelper.Height);
+
+                bool updateRange = false;
+                if (newHViewportSize != _hScroll.ViewportSize || newVViewportSize != _vScroll.ViewportSize)
+                    updateRange = true;
+
+                _hScroll.ViewportSize = newHViewportSize;
+                _vScroll.ViewportSize = newVViewportSize;
+
+                if (updateRange)
+                    UpdateScrollbarsRange();
+            }
+
+            _hScroll.Arrange(new Rect(0, arrangeBounds.Height - _hScroll.DesiredSize.Height, arrangeBounds.Width - _vScroll.DesiredSize.Width, _hScroll.DesiredSize.Height));
+            _vScroll.Arrange(new Rect(arrangeBounds.Width - _vScroll.DesiredSize.Width, 0, _vScroll.DesiredSize.Width, arrangeBounds.Height - _hScroll.DesiredSize.Height));
+            return arrangeBounds;
+        }
+
+        protected override void OnRenderSizeChanged(SizeChangedInfo info)
+        {
+            UpdateScrollbarsVisibility(info.NewSize.Width, info.NewSize.Height);
+        }
+
+        protected override void OnRender(DrawingContext dc)
+        {
+            Rect rect = new Rect(0, 0, Math.Max(0.0, RenderSize.Width - _vScroll.ActualWidth), Math.Max(0.0, RenderSize.Height - _hScroll.ActualHeight));
+            dc.DrawRectangle(Background, null, rect);
+            if (rows.Count() == 0)
+                return;
+
+            double y = 0;
+            for (int rowIndex = _verticalOffset; rowIndex < rows.Count(); rowIndex++)
+            {
+                if (y + glyphHelper.Height >= rect.Height)
+                    break;
+
+                double x = 0;
+                Row row = rows[rowIndex];
+                for (int glyphIndex = _horizontalOffset; glyphIndex < row.glyphs.Count(); glyphIndex++)
+                {
+                    if (x + glyphHelper.Width >= rect.Width)
+                        break;
+
+                    Glyph glyph = row.glyphs[glyphIndex];
+
+                    Brush background = glyph.highlighted ? HighlightBackground : glyph.background;
+                    Brush foreground = glyph.highlighted ? HighlightForeground : glyph.background;
+
+                    if (glyph.selected)
+                    {
+                        foreground = MixBrushes(SelectionForeground, foreground ?? Foreground);
+                        background = MixBrushes(SelectionBackground, background ?? Background);
+                    }
+
+                    if (background != null)
+                    {
+                        GuidelineSet bgGuidelines = new GuidelineSet();
+                        bgGuidelines.GuidelinesX.Add(x);
+                        bgGuidelines.GuidelinesX.Add(x + glyphHelper.Width);
+                        bgGuidelines.GuidelinesY.Add(y);
+                        bgGuidelines.GuidelinesY.Add(y + glyphHelper.Height);
+
+                        dc.PushGuidelineSet(bgGuidelines);
+                        dc.DrawRectangle(background, null, new Rect(x, y, glyphHelper.Width, glyphHelper.Height));
+                        dc.Pop();
+                    }
+
+                    Point point = new Point(x, y + glyphHelper.Baseline);
+                    GlyphRun glyphRun = glyphHelper.CreateGlyphRun(point, new ushort[] { glyph.glyphIndex }, new double[] { glyphHelper.Width });
+
+                    GuidelineSet guidelines = new GuidelineSet();
+                    guidelines.GuidelinesX.Add(point.X);
+                    guidelines.GuidelinesY.Add(point.Y);
+                    dc.PushGuidelineSet(guidelines);
+                    dc.DrawGlyphRun(foreground ?? Foreground, glyphRun);
+                    dc.Pop();
+
+                    x += glyphHelper.Width;
+                }
+
+
+                y += glyphHelper.Height;
+            }
         }
 
         protected override void OnLostFocus(RoutedEventArgs e)
@@ -199,7 +491,7 @@ namespace MCUTerm.Controls
             base.OnMouseLeftButtonDown(e);
 
             Point mouseDownPoint = e.GetPosition(this);
-            int textPosition = GetTextPosition(GetPositionFromPoint(mouseDownPoint, true));
+            int textPosition = GetPositionFromPoint(mouseDownPoint);
             if (e.ClickCount == 1)
             {
                 selectionDragStart = textPosition;
@@ -223,7 +515,7 @@ namespace MCUTerm.Controls
             }
 
             Point mousePoint = e.GetPosition(this);
-            int newPosition = GetTextPosition(GetPositionFromPoint(mousePoint, true));
+            int newPosition = GetPositionFromPoint(mousePoint);
 
             if (selectionDragStart < newPosition)
                 UpdateSelection(selectionDragStart, newPosition - selectionDragStart);
@@ -245,16 +537,81 @@ namespace MCUTerm.Controls
                 UpdateSelection(leftPos, rightPos - leftPos + 1);
         }
 
-        protected int GetTextPosition(TextPointer position)
+        protected int GetPositionFromPoint(Point mousePoint)
         {
-            var result = 0;
-            while(position != null)
-            {
-                result += position.GetTextRunLength(LogicalDirection.Backward);
-                position = position.GetNextContextPosition(LogicalDirection.Backward);
-            }
+            int row = (int)(mousePoint.Y / glyphHelper.Height) + _verticalOffset;
 
-            return result;
+            int position = 0;
+            for (int i = 0; i < row; i++)
+                position += rows[i].TextLength;
+
+            position += (int)(mousePoint.X / glyphHelper.Width) + _horizontalOffset;
+            return position;
+        }
+
+        protected void GetRowFromPos(int textPos, out int row, out int posInRow)
+        {
+            row = 0;
+            posInRow = 0;
+            if (textPos <= 0)
+                return;
+
+            while (row < rows.Count())
+            {
+                posInRow += rows[row].TextLength;
+                if (posInRow > textPos)
+                {
+                    posInRow = textPos - posInRow + rows[row].TextLength;
+                    return;
+                }
+
+                row++;
+            }
+        }
+
+        protected enum MarkType
+        {
+            Selected,
+            Highlighted
+        }
+
+        protected void MarkSymbols(MarkType markType, bool value, int rowIndex, int startPos, int endPos = -1)
+        {
+            Row row = rows[rowIndex];
+            if (endPos == -1)
+                endPos = row.glyphs.Count();
+
+            if (markType == MarkType.Selected)
+            {
+                while (startPos < endPos)
+                    row.glyphs[startPos++].selected = value;
+            }
+            else
+            {
+                while (startPos < endPos)
+                    row.glyphs[startPos++].highlighted = value;
+            }
+        }
+
+        protected void MarkRange(MarkType markType, bool value, int start, int length)
+        {
+            if (length == 0)
+                return;
+
+            GetRowFromPos(start, out int startRow, out int startPosInRow);
+            GetRowFromPos(start + length, out int endRow, out int endPosInRow);
+
+            if (startRow != endRow)
+            {
+                MarkSymbols(markType, value, startRow, startPosInRow);
+                for (int i = startRow + 1; i < endRow; i++)
+                    MarkSymbols(markType, value, i, 0);
+                MarkSymbols(markType, value, endRow, 0, endPosInRow);
+            }
+            else
+            {
+                MarkSymbols(markType, value, startRow, startPosInRow, endPosInRow);
+            }
         }
 
         protected void UpdateSelection(int start, int length)
@@ -262,18 +619,14 @@ namespace MCUTerm.Controls
             if (selectionStart == start && SelectionLength == length)
                 return;
 
+            MarkRange(MarkType.Selected, false, selectionStart, selectionLength);
+            MarkRange(MarkType.Selected, true, start, length);
+
             selectionStart = start;
             selectionLength = length;
             selectedText = Text.Substring(start, length);
 
-            UpdateContent();
-        }
-
-        private static void OnSelectionBrushChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            var textBlock = (TextBlockEx)sender;
-            if (textBlock.SelectionLength != 0)
-                textBlock.UpdateContent();
+            InvalidateVisual();
         }
 
         private static void OnHighlightTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -284,151 +637,121 @@ namespace MCUTerm.Controls
 
         protected void UpdateContent()
         {
-            var newRuns = new List<Run>();
-
-            if (HighlightedText.Length > 0)
-                ApplyHighlights(newRuns);
+            if (DisableFilterHighlighted || HighlightedText.Length <= 0)
+            {
+                rows = originalRows;
+                text = originalText;
+            }
             else
-                CloneRunList(newRuns);
+            {
+                FilterHighlights();
+            }
 
-            if (selectionLength > 0)
-                ApplySelection(newRuns);
+            MarkRange(MarkType.Highlighted, false, 0, Text.Length);
+            if (EnableHighlight && HighlightedText.Length > 0)
+                ApplyHighlights();
 
-            InlineCollection inlines = Inlines;
-            inlines.Clear();
-            inlines.AddRange(newRuns);
+            _maxWidth = 0;
+            foreach (var row in rows)
+                _maxWidth = Math.Max(_maxWidth, row.TextLength - 1);
+            
+
+            UpdateScrollbarsRange();
+            UpdateScrollbarsVisibility(ActualWidth, ActualHeight);
+            InvalidateVisual();
         }
 
-        private void CloneRunList(List<Run> runs)
+        protected void UpdateScrollbarsRange()
         {
-            foreach (var run in runList)
-                runs.Add(CreateRun(run.Text, run.Background, run.Foreground));
+            double hValue = _hScroll.Value;
+            _hScroll.Maximum = Math.Max(0, _maxWidth - _hScroll.ViewportSize + 1);
+            _hScroll.Value = hValue;
+
+            double vValue = _vScroll.Value;
+            _vScroll.Maximum = Math.Max(0, rows.Count() - _vScroll.ViewportSize + 1);
+            _vScroll.Value = vValue;
         }
 
-        protected void ApplyHighlights(List<Run> runs)
+        protected void UpdateScrollbarsVisibility(double width, double height)
         {
+            if (glyphHelper == null)
+                return;
+
+            if (_maxWidth * glyphHelper.Width >= width)
+                _hScroll.Visibility = Visibility.Visible;
+            else
+                _hScroll.Visibility = Visibility.Collapsed;
+
+            if (rows.Count() * glyphHelper.Height >= height)
+                _vScroll.Visibility = Visibility.Visible;
+            else
+                _vScroll.Visibility = Visibility.Collapsed;
+        }
+
+        protected void FilterHighlights()
+        {
+            string highlightedText = HighlightedText;
             var comparision = MatchCaseHighlighted ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-            Brush background = EnableHighlight ? HighlightBackground : null;
-            Brush foreground = EnableHighlight ? HighlightForeground : null;
+            rows = new List<Row>();
+            text = "";
 
-            string highlightedText = HighlightedText;
-            bool skipLineBreak = DisableFilterHighlighted;
-
-            var skippedRuns = new List<Run>();
-            foreach (var run in runList)
-            {
-                string runText = run.Text;
-                if (runText.Length == 0)
-                    continue;
-
-                int textPos = 0;
-                int startTextPos = 0;
-                do
-                {
-                    if (runText[textPos] == '\n' || runText[textPos] == '\r')
-                    {
-                        if (textPos + 1 < runText.Length &&
-                            ((runText[textPos] == '\n' && runText[textPos + 1] == '\r') ||
-                             (runText[textPos] == '\r' && runText[textPos + 1] == '\n')))
-                        {
-                            textPos++;
-                        }
-
-                        if (skipLineBreak)
-                        {
-                            runs.AddRange(skippedRuns);
-                            skippedRuns.Clear();
-
-                            if (textPos - startTextPos + 1 > 0)
-                                runs.Add(CreateRun(runText.Substring(startTextPos, textPos - startTextPos + 1), run.Background, run.Foreground));
-                        }
-                        else
-                            skippedRuns.Clear();
-
-                        startTextPos = textPos + 1;
-                        skipLineBreak = DisableFilterHighlighted;
-                    }
-
-                    if (String.Compare(runText, textPos, highlightedText, 0, highlightedText.Length, comparision) == 0)
-                    {
-                        runs.AddRange(skippedRuns);
-                        skippedRuns.Clear();
-
-                        if (textPos - startTextPos > 0)
-                        {
-                            runs.Add(CreateRun(runText.Substring(startTextPos, textPos - startTextPos),
-                                               run.Background, run.Foreground));
-                        }
-
-                        runs.Add(CreateRun(runText.Substring(textPos, HighlightedText.Length),
-                                           background ?? run.Background, foreground ?? run.Foreground));
-
-                        textPos += highlightedText.Length;
-                        startTextPos = textPos;
-
-                        skipLineBreak = true;
-                    }
-                    else
-                        textPos++;
-                }
-                while (textPos < runText.Length);
-
-                if (startTextPos < runText.Length)
-                    skippedRuns.Add(CreateRun(runText.Substring(startTextPos), run.Background, run.Foreground));
-            }
-
-            runs.AddRange(skippedRuns);
-        }
-
-        protected void ApplySelection(List<Run> runs)
-        {
             int textPos = 0;
-            for (int runIndex = 0; runIndex < runs.Count(); runIndex++)
+            foreach (var row in originalRows)
             {
-                Run run = runs[runIndex];
-                string runText = run.Text;
-
-                int selectionEnd = selectionStart + selectionLength;
-                if (selectionStart > textPos && selectionStart < textPos + runText.Length)
+                int posInRow = textPos;
+                int lastPosInRow = posInRow + row.TextLength;
+                while (posInRow < lastPosInRow)
                 {
-                    int pos = selectionStart - textPos;
-                    run.Text = runText.Substring(0, pos);
-
-                    runIndex++;
-                    if (selectionEnd < textPos + runText.Length)
+                    if (String.Compare(originalText, posInRow, highlightedText, 0, highlightedText.Length, comparision) == 0)
                     {
-                        runs.Insert(runIndex, CreateRun(runText.Substring(pos, selectionLength), 
-                                                        MixBrushes(SelectionBackground, run.Background),
-                                                        MixBrushes(SelectionForeground, run.Foreground)));
+                        if (row == originalRows.Last())
+                            text += originalText.Substring(textPos, row.TextLength - 1);
+                        else
+                            text += originalText.Substring(textPos, row.TextLength);
 
-                        runs.Insert(runIndex + 1, CreateRun(runText.Substring(pos + selectionLength),
-                                                            run.Background, run.Foreground));
+                        rows.Add(row);
                         break;
                     }
-                    else
-                        runs.Insert(runIndex, CreateRun(runText.Substring(pos),
-                                                        MixBrushes(SelectionBackground, run.Background),
-                                                        MixBrushes(SelectionForeground, run.Foreground)));
-                }
-                else if (selectionEnd > textPos && selectionEnd < textPos + runText.Length)
-                {
-                    int pos = selectionEnd - textPos;
-                    run.Text = runText.Substring(pos);
 
-                    runs.Insert(runIndex, CreateRun(runText.Substring(0, pos),
-                                                    MixBrushes(SelectionBackground, run.Background),
-                                                    MixBrushes(SelectionForeground, run.Foreground)));
-                    break;
-                }
-                else if (selectionStart <= textPos && selectionEnd >= textPos + runText.Length)
-                {
-                    run.Background = MixBrushes(SelectionBackground, run.Background);
-                    run.Foreground = MixBrushes(SelectionForeground, run.Foreground);
+                    posInRow++;
                 }
 
-                textPos += runText.Length;
+                textPos += row.TextLength;
             }
+
+            if (text.Length > 0 && text.Last() == '\n')
+                rows.Add(new Row());
+        }
+
+        protected void ApplyHighlights()
+        {
+            string highlightedText = HighlightedText;
+            var comparision = MatchCaseHighlighted ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+
+            int textPos = 0;
+            while (textPos < Text.Length)
+            {
+                if (String.Compare(Text, textPos, highlightedText, 0, highlightedText.Length, comparision) == 0)
+                {
+                    MarkRange(MarkType.Highlighted, true, textPos, highlightedText.Length);
+                    textPos += highlightedText.Length - 1;
+                }
+
+                textPos++;
+            }
+        }
+
+        private void OnHScrollValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _horizontalOffset = (int)(_hScroll.Value);
+            InvalidateVisual();
+        }
+
+        private void OnVScrollValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _verticalOffset = (int)(_vScroll.Value);
+            InvalidateVisual();
         }
 
         private Brush MixBrushes(Brush brush1, Brush brush2)
@@ -448,15 +771,5 @@ namespace MCUTerm.Controls
             else
                 return brush1;
         }
-
-        private Run CreateRun(string Text, Brush background, Brush forground)
-        {
-            return new Run(Text)
-            {
-                Background = background ?? Background,
-                Foreground = forground ?? Foreground
-            };
-        }
     }
-
 }

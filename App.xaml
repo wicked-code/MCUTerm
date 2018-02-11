@@ -23,6 +23,7 @@
                 <ResourceDictionary Source="/Theme/TextBlockEx.xaml"/>
                 <ResourceDictionary Source="/Theme/ComboBox.xaml"/>
                 <ResourceDictionary Source="/Theme/ListBox.xaml"/>
+                <ResourceDictionary Source="/Theme/ScrollBar.xaml"/>
                 <ResourceDictionary Source="/Theme/ScrollViewer.xaml"/>
                 <ResourceDictionary Source="/Theme/Window.xaml"/>
             </ResourceDictionary.MergedDictionaries>

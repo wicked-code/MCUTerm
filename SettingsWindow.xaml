@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:MCUTerm"
         xmlns:theme="clr-namespace:ModenTheme"
         mc:Ignorable="d"
-        Title="Terminal Settings" Width="420"
+        Title="Terminal Settings" Width="463"
         SizeToContent="Height"
         FontFamily="Consolas"
-        FontSize="12"
+        FontSize="13"
         Foreground="{StaticResource ForegroundBrush}"
         WindowStartupLocation="CenterOwner"
         Style="{StaticResource WindowStyle}"
@@ -102,9 +102,9 @@
             <Grid Margin="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition Width="110"></ColumnDefinition>
+                    <ColumnDefinition Width="120"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition Width="110"></ColumnDefinition>
+                    <ColumnDefinition Width="120"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Label>At Startup</Label>
                 <ComboBox Grid.Column="1" SelectedIndex="{Binding Source={StaticResource Settings}, Path=Default.AtStartupIndex}">
@@ -126,9 +126,9 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition Width="110"></ColumnDefinition>
+                    <ColumnDefinition Width="120"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition Width="110"></ColumnDefinition>
+                    <ColumnDefinition Width="120"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Label>Data Bits</Label>
                 <ComboBox Grid.Column="1" SelectedIndex="{Binding Source={StaticResource Settings}, Path=Default.DataBitsIndex}">

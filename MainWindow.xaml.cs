@@ -274,23 +274,10 @@ namespace MCUTerm
 
         private void AppendConsole(string text)
         {
-            string selection = ConsoleText.SelectedText;
-            int selectionStart = ConsoleText.SelectionStart;
-            int selectionLength = ConsoleText.SelectionLength;
-
             AppendConsoleText(text);
 
-            if (selectionLength > 0 && ConsoleText.Text.Length >= (selectionStart + selectionLength) &&
-                ConsoleText.Text.Substring(selectionStart, selectionLength) == selection)
-            {
-                double scrollPos = ConsoleTextScroll.VerticalOffset;
-                ConsoleText.Select(selectionStart, selectionLength);
-                ConsoleTextScroll.ScrollToVerticalOffset(scrollPos);
-            }
-            else if (Properties.Settings.Default.AutoScroll && ConsoleText.Text.Length > 0)
-            {
-                ConsoleTextScroll.ScrollToBottom();
-            }
+            if (ConsoleText.SelectedText.Length <= 0 && Properties.Settings.Default.AutoScroll)
+                ConsoleText.ScrollToBottom();
         }
 
         // The names of the first 32 characters

@@ -15,7 +15,7 @@
         MinWidth="600"
         SizeToContent="Width"
         FontFamily="Consolas"
-        FontSize="12"
+        FontSize="13"
         Icon="/Resources/terminal.png"
         Foreground="{StaticResource ForegroundBrush}"
         Style="{StaticResource WindowStyle}"
@@ -153,17 +153,6 @@
             </StackPanel>
         </Border>
         <controls:BorderEx Grid.Row="1" Margin="5,0">
-            <ScrollViewer Name="ConsoleTextScroll" VerticalScrollBarVisibility="Auto" Focusable="False">
-                <ScrollViewer.Style>
-                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource {x:Type ScrollViewer}}">
-                        <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Source={StaticResource Settings}, Path=Default.WordWrap}" Value="True">
-                                <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ScrollViewer.Style>
                 <controls:TextBlockEx x:Name="ConsoleText" TabIndex="6"
                                       HighlightedText="{Binding Text, ElementName=Filter}"
                                       MatchCaseHighlighted="{Binding Source={StaticResource Settings}, Path=Default.FilterMatchCase}"
@@ -172,7 +161,6 @@
                                       TextWrapping="Wrap"
                                       KeyUp="ConsoleText_KeyUp"
                                       />
-            </ScrollViewer>
         </controls:BorderEx>
         <Border Grid.Row="2" Padding="7,3">
             <DockPanel>
