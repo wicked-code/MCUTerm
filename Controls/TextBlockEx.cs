@@ -103,6 +103,9 @@ namespace MCUTerm.Controls
             }
         }
 
+        const int TabSize = 4;
+        const int MaxWordWrapLenght = 20;
+
         private VisualCollection _visuals;
         private ScrollBar _hScroll;
         private ScrollBar _vScroll;
@@ -206,22 +209,15 @@ namespace MCUTerm.Controls
           DependencyProperty.Register("HighlightForeground", typeof(Brush), typeof(TextBlockEx),
                                       new FrameworkPropertyMetadata((Brush)null, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        /// <summary>
-        /// The TextWrapping property controls whether or not text wraps
-        /// when it reaches the flow edge of its containing block box.
-        /// </summary>
-        public TextWrapping TextWrapping
+        public bool WordWrap
         {
-            get { return (TextWrapping)GetValue(TextWrappingProperty); }
-            set { SetValue(TextWrappingProperty, value); }
+            get { return (bool)GetValue(WordWrapProperty); }
+            set { SetValue(WordWrapProperty, value); }
         }
 
-        /// <summary>
-        /// DependencyProperty for <see cref="TextWrapping" /> property.
-        /// </summary>
-        public static readonly DependencyProperty TextWrappingProperty =
-            DependencyProperty.Register("TextWrapping", typeof(TextWrapping), typeof(TextBlockEx),
-                                        new FrameworkPropertyMetadata(TextWrapping.NoWrap, FrameworkPropertyMetadataOptions.AffectsRender));
+        public static readonly DependencyProperty WordWrapProperty =
+            DependencyProperty.Register("WordWrap", typeof(bool), typeof(TextBlockEx),
+                                        new FrameworkPropertyMetadata(false, OnWordWrapChanged));
 
         public string SelectedText
         {
@@ -284,7 +280,6 @@ namespace MCUTerm.Controls
             AddText(text, null, null);
         }
 
-        const int TabSize = 4;
         public void AddText(string text, Brush background, Brush foreground)
         {
             if (text.Length == 0)
@@ -404,6 +399,9 @@ namespace MCUTerm.Controls
 
         protected override void OnRenderSizeChanged(SizeChangedInfo info)
         {
+            if (WordWrap == true && info.WidthChanged == true)
+                UpdateContent();
+
             UpdateScrollbarsVisibility(info.NewSize.Width, info.NewSize.Height);
         }
 
@@ -630,12 +628,6 @@ namespace MCUTerm.Controls
             InvalidateVisual();
         }
 
-        private static void OnHighlightTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            var textBlock = (TextBlockEx)sender;
-            textBlock.UpdateContent();
-        }
-
         protected void UpdateContent()
         {
             if (DisableFilterHighlighted || HighlightedText.Length <= 0)
@@ -651,6 +643,9 @@ namespace MCUTerm.Controls
             MarkRange(MarkType.Highlighted, false, 0, Text.Length);
             if (EnableHighlight && HighlightedText.Length > 0)
                 ApplyHighlights();
+
+            if (WordWrap == true)
+                WrapLines();
 
             _maxWidth = 0;
             foreach (var row in rows)
@@ -689,7 +684,7 @@ namespace MCUTerm.Controls
                 _vScroll.Visibility = Visibility.Collapsed;
         }
 
-        protected void FilterHighlights()
+        private void FilterHighlights()
         {
             string highlightedText = HighlightedText;
             var comparision = MatchCaseHighlighted ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
@@ -725,7 +720,7 @@ namespace MCUTerm.Controls
                 rows.Add(new Row());
         }
 
-        protected void ApplyHighlights()
+        private void ApplyHighlights()
         {
             string highlightedText = HighlightedText;
             var comparision = MatchCaseHighlighted ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
@@ -741,6 +736,59 @@ namespace MCUTerm.Controls
 
                 textPos++;
             }
+        }
+
+        private void WrapLines()
+        {
+            rows = new List<Row>(rows);
+
+            int textPos = 0;
+            int rowIndex = 0;
+            int maxWidth = (int)(ActualWidth / glyphHelper.Width);
+            while(rowIndex < rows.Count())
+            {
+                Row row = rows[rowIndex];
+                if (row.TextLength - 1 > maxWidth)
+                {
+                    int wrapPoint = maxWidth;
+                    int wrapStopPoint = Math.Max(0, maxWidth - MaxWordWrapLenght);
+                    while(wrapPoint > wrapStopPoint)
+                    {
+                        if (Char.IsWhiteSpace(row.glyphs[wrapPoint].symbol))
+                            break;
+
+                        wrapPoint--;
+                    }
+
+                    if (wrapPoint <= wrapStopPoint)
+                        wrapPoint = maxWidth;
+
+                    wrapPoint++;
+                    text.Insert(textPos + wrapPoint, "\n");
+
+                    rows[rowIndex] = new Row();
+                    rows.Insert(rowIndex + 1, new Row());
+
+                    int copyElementsCount = row.glyphs.Count - wrapPoint;
+                    rows[rowIndex].glyphs.AddRange(row.glyphs.GetRange(0, wrapPoint - 1));
+                    rows[rowIndex + 1].glyphs.AddRange(row.glyphs.GetRange(wrapPoint, copyElementsCount));
+                }
+
+                textPos += row.TextLength;
+                rowIndex++;
+            }
+        }
+
+        private static void OnHighlightTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var textBlock = (TextBlockEx)sender;
+            textBlock.UpdateContent();
+        }
+
+        private static void OnWordWrapChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var textBlock = (TextBlockEx)sender;
+            textBlock.UpdateContent();
         }
 
         private void OnHScrollValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

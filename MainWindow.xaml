@@ -153,14 +153,13 @@
             </StackPanel>
         </Border>
         <controls:BorderEx Grid.Row="1" Margin="5,0">
-                <controls:TextBlockEx x:Name="ConsoleText" TabIndex="6"
+            <controls:TextBlockEx x:Name="ConsoleText" TabIndex="6"
                                       HighlightedText="{Binding Text, ElementName=Filter}"
                                       MatchCaseHighlighted="{Binding Source={StaticResource Settings}, Path=Default.FilterMatchCase}"
                                       DisableFilterHighlighted="{Binding Source={StaticResource Settings}, Path=Default.DisableFilter}"
                                       EnableHighlight="{Binding Source={StaticResource Settings}, Path=Default.EnableHighlight}"
-                                      TextWrapping="Wrap"
-                                      KeyUp="ConsoleText_KeyUp"
-                                      />
+                                      WordWrap="{Binding Source={StaticResource Settings}, Path=Default.WordWrap}"
+                                      KeyUp="ConsoleText_KeyUp"/>
         </controls:BorderEx>
         <Border Grid.Row="2" Padding="7,3">
             <DockPanel>
