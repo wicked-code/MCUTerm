@@ -545,7 +545,8 @@ namespace MCUTerm.Controls
             for (int i = 0; i < row; i++)
                 position += rows[i].TextLength;
 
-            position += (int)(mousePoint.X / glyphHelper.Width) + _horizontalOffset;
+            int column = (int)(mousePoint.X / glyphHelper.Width) + _horizontalOffset;
+            position += Math.Min(column, rows[row].TextLength - 1);
             return position;
         }
 
