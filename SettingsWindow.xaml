@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MCUTerm"
         xmlns:theme="clr-namespace:ModenTheme"
         mc:Ignorable="d"
-        Title="Terminal Settings" Width="463"
+        Title="Terminal Settings " Width="463"
         SizeToContent="Height"
         FontFamily="Consolas"
         FontSize="13"
@@ -14,7 +14,7 @@
         WindowStartupLocation="CenterOwner"
         Style="{StaticResource WindowStyle}"
         theme:Ext.IsToolWindow="True"
-        Icon="{x:Null}" theme:Ext.Image="{StaticResource Icon.GearLight}"
+        Icon="{x:Null}" theme:Ext.Image="{StaticResource Icon.GearTitle}"
         >
     <Window.Resources>
         <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">

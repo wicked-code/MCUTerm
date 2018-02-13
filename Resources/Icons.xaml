@@ -24,7 +24,7 @@
           Data="{StaticResource Geometry.Terminal}"/>
     <Path x:Key="Icon.Gear" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkGrayBrush}" RenderTransformOrigin="0.5,0.5"
           Data="{StaticResource Geometry.Gear}"/>
-    <Path x:Key="Icon.GearLight" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.WindowTitleBrush}" RenderTransformOrigin="0.5,0.5"
+    <Path x:Key="Icon.GearTitle" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.WindowTitleBrush}" RenderTransformOrigin="0.5,0.5"
           Data="{StaticResource Geometry.Gear}"/>
     <Path x:Key="Icon.Hex" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkBlueBrush}" RenderTransformOrigin="0.5,0.5"
           Data="{StaticResource Geometry.Hex}"/>

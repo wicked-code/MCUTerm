@@ -18,6 +18,7 @@
 
     <Color x:Key="GlyphColor">#676767</Color>
     <Color x:Key="ForegroundColor">#444444</Color>
+    <Color x:Key="ForegroundColor.Dark">#030303</Color>
     <Color x:Key="TextBox.BackgroundColor">#FFFFFF</Color>
     <Color x:Key="BackgroundColor">#F1F1F1</Color>
     <Color x:Key="BackgroundColor.Button">#EAEAEA</Color>
@@ -63,6 +64,7 @@
     <Color x:Key="Icon.RedOrangeColor">#EDC87E</Color>
 
     <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}"/>
+    <SolidColorBrush x:Key="ForegroundBrush.Dark" Color="{StaticResource ForegroundColor.Dark}"/>
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
     <SolidColorBrush x:Key="Disabled.ForegroundBrush" Color="{StaticResource Disabled.ForegroundColor}"/>
@@ -78,7 +80,7 @@
     <SolidColorBrush x:Key="Icon.GreenBrush" Color="{StaticResource Icon.GreenColor}"/>
     <SolidColorBrush x:Key="Icon.RedBrush" Color="{StaticResource Icon.RedColor}"/>
     <SolidColorBrush x:Key="Icon.RedOrangeBrush" Color="{StaticResource Icon.RedOrangeColor}"/>
-    <SolidColorBrush x:Key="Icon.WindowTitleBrush" Color="{StaticResource MouseOver.BackgroundColor}"/>
+    <SolidColorBrush x:Key="Icon.WindowTitleBrush" Color="{StaticResource Icon.DarkGrayColor}"/>
 
     <!-- Window -->
     <SolidColorBrush x:Key="TitleBarBackgroundBrush" Color="{StaticResource Window.BorderColor}"/>
