@@ -135,9 +135,7 @@
                                             </Button>
                                         </Grid>
                                     </Border>
-                                    <Border BorderThickness="0" BorderBrush="White" Background="White">
-                                        <ContentPresenter />
-                                    </Border>
+                                    <ContentPresenter />
                                 </DockPanel>
                             </Border>
                         </controls:ShadowBorder>

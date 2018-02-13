@@ -238,7 +238,6 @@
                 <controls:ShadowBorder x:Name="shadow" ShadowColor="{StaticResource BorderColor.Dark}">
                     <Border x:Name="dropDownBorder"
                             BorderThickness="1"
-                            Padding="1"
                             BorderBrush="{StaticResource BorderBrush}"
                             Background="{StaticResource BackgroundBrush}"
                             MaxHeight="{TemplateBinding MaxDropDownHeight}"
@@ -345,7 +344,7 @@
                    PopupAnimation="Slide"
                    SnapsToDevicePixels="True">
                 <controls:ShadowBorder x:Name="shadow" ShadowColor="{StaticResource BorderColor.Dark}">
-                    <Border x:Name="dropDownBorder" 
+                    <Border x:Name="dropDownBorder"
                             BorderThickness="1"
                             BorderBrush="{StaticResource BorderBrush}"
                             Background="{StaticResource BackgroundBrush}"
