@@ -238,6 +238,7 @@
                 <controls:ShadowBorder x:Name="shadow">
                     <Border x:Name="dropDownBorder"
                             BorderThickness="1"
+                            Padding="1"
                             BorderBrush="{StaticResource BorderBrush}"
                             Background="{StaticResource BackgroundBrush}"
                             MaxHeight="{TemplateBinding MaxDropDownHeight}"

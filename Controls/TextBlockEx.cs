@@ -106,6 +106,8 @@ namespace MCUTerm.Controls
         const int TabSize = 4;
         const int MaxWordWrapLenght = 20;
 
+        private Point _lastMouseRightButtonPoint;
+
         private VisualCollection _visuals;
         private ScrollBar _hScroll;
         private ScrollBar _vScroll;
@@ -127,6 +129,9 @@ namespace MCUTerm.Controls
         protected int selectionStart;
         protected int selectionLength;
         protected string selectedText;
+
+        public static readonly RoutedUICommand SelectWordCommand = new RoutedUICommand("Select Word", "SelectWord",
+                                typeof(TextBlockEx), new InputGestureCollection() { new KeyGesture(Key.W, ModifierKeys.Control) });
 
         public string HighlightedText
         {
@@ -249,6 +254,11 @@ namespace MCUTerm.Controls
 
             CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll,
                 (sender, e) => { ((TextBlockEx)sender).Select(0, ((TextBlockEx)sender).Text.Length); },
+                (sender, e) => { e.CanExecute = ((TextBlockEx)sender).Text.Length > 0; }
+            ));
+
+            CommandBindings.Add(new CommandBinding(SelectWordCommand,
+                (sender, e) => { ((TextBlockEx)sender).SelectWord(GetPositionFromPoint(_lastMouseRightButtonPoint)); },
                 (sender, e) => { e.CanExecute = ((TextBlockEx)sender).Text.Length > 0; }
             ));
 
@@ -478,6 +488,8 @@ namespace MCUTerm.Controls
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseDown(e);
+            if (e.RightButton == MouseButtonState.Pressed)
+                _lastMouseRightButtonPoint = e.GetPosition(this);
 
             if (IsKeyboardFocused == false)
                 Keyboard.Focus(this);

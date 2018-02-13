@@ -25,6 +25,7 @@
                 <ResourceDictionary Source="/Theme/ListBox.xaml"/>
                 <ResourceDictionary Source="/Theme/ScrollBar.xaml"/>
                 <ResourceDictionary Source="/Theme/ScrollViewer.xaml"/>
+                <ResourceDictionary Source="/Theme/ContextMenu.xaml"/>
                 <ResourceDictionary Source="/Theme/Window.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

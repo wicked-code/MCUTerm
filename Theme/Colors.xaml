@@ -190,5 +190,17 @@
     <SolidColorBrush x:Key="ScrollBar.Pressed.Thumb" Color="{StaticResource BackgroundColor.Dark}"/>
     <SolidColorBrush x:Key="ScrollBar.Corner" Color="{StaticResource BackgroundColor}"/>
 
+    <!--Menu-->
+    <SolidColorBrush x:Key="Menu.Static.Background" Color="{StaticResource BackgroundColor.Dark}"/>
+    <SolidColorBrush x:Key="Menu.Static.Foreground" Color="{StaticResource ForegroundColor}"/>
+    <SolidColorBrush x:Key="Menu.Static.Border" Color="{StaticResource BackgroundColor.Dark}"/>
+    <SolidColorBrush x:Key="Menu.MenuItem.Static.Border" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="Menu.MenuItem.Static.Background" Color="{StaticResource BackgroundColor}"/>
+    <SolidColorBrush x:Key="Menu.MenuItem.MouseOver.Background" Color="{DynamicResource MouseOver.BackgroundColor}"/>
+    <SolidColorBrush x:Key="Menu.MenuItem.MouseOver.BackgroundDark" Color="{DynamicResource BorderColor}"/>
+    <SolidColorBrush x:Key="Menu.MenuItem.Disabled.Foreground" Color="{StaticResource Disabled.ForegroundColor}"/>
+    <SolidColorBrush x:Key="MenuTextBrushKey" Color="{StaticResource ForegroundColor}"/>
+    <!--MenuSeparator-->
+    <SolidColorBrush x:Key="Menu.Static.Separator" Color="{StaticResource BorderColor}"/>
 
 </ResourceDictionary>

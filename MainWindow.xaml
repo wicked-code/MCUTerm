@@ -159,7 +159,34 @@
                                       DisableFilterHighlighted="{Binding Source={StaticResource Settings}, Path=Default.DisableFilter}"
                                       EnableHighlight="{Binding Source={StaticResource Settings}, Path=Default.EnableHighlight}"
                                       WordWrap="{Binding Source={StaticResource Settings}, Path=Default.WordWrap}"
-                                      KeyUp="ConsoleText_KeyUp"/>
+                                      KeyUp="ConsoleText_KeyUp">
+                <controls:TextBlockEx.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="Copy">
+                            <!--MenuItem.Icon>
+                                <ContentControl Content="{StaticResource Icon.SendCmd}"
+                                                Width="{StaticResource SmallButton.Image.Size}"
+                                                Height="{StaticResource SmallButton.Image.Size}"/>
+                            </MenuItem.Icon-->
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Command="SelectAll">
+                            <!--MenuItem.Icon>
+                                <ContentControl Content="{StaticResource Icon.SendCmd}"
+                                                Width="{StaticResource SmallButton.Image.Size}"
+                                                Height="{StaticResource SmallButton.Image.Size}"/>
+                            </MenuItem.Icon-->
+                        </MenuItem>
+                        <MenuItem Command="controls:TextBlockEx.SelectWordCommand">
+                            <!--MenuItem.Icon>
+                                <ContentControl Content="{StaticResource Icon.SendCmd}"
+                                                Width="{StaticResource SmallButton.Image.Size}"
+                                                Height="{StaticResource SmallButton.Image.Size}"/>
+                            </MenuItem.Icon-->
+                        </MenuItem>
+                    </ContextMenu>
+                </controls:TextBlockEx.ContextMenu>
+            </controls:TextBlockEx>
         </controls:BorderEx>
         <Border Grid.Row="2" Padding="7,3">
             <DockPanel>
