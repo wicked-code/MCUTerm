@@ -17,7 +17,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
-                    <controls:ShadowBorder>
+                    <controls:ShadowBorder ShadowColor="{StaticResource BorderColor.Dark}">
                         <Border x:Name="dropDownBorder"
                             BorderThickness="1"
                             Padding="1"

@@ -235,7 +235,7 @@
                    HorizontalOffset="{StaticResource Popup.Offset}"
                    VerticalOffset="{StaticResource Popup.Offset}"
                    PopupAnimation="Slide">
-                <controls:ShadowBorder x:Name="shadow">
+                <controls:ShadowBorder x:Name="shadow" ShadowColor="{StaticResource BorderColor.Dark}">
                     <Border x:Name="dropDownBorder"
                             BorderThickness="1"
                             Padding="1"
@@ -344,7 +344,7 @@
                    VerticalOffset="{StaticResource Popup.Offset}"
                    PopupAnimation="Slide"
                    SnapsToDevicePixels="True">
-                <controls:ShadowBorder x:Name="shadow">
+                <controls:ShadowBorder x:Name="shadow" ShadowColor="{StaticResource BorderColor.Dark}">
                     <Border x:Name="dropDownBorder" 
                             BorderThickness="1"
                             BorderBrush="{StaticResource BorderBrush}"

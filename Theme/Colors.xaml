@@ -23,6 +23,7 @@
     <Color x:Key="BackgroundColor.Button">#EAEAEA</Color>
     <Color x:Key="BackgroundColor.Dark">#E2E2E2</Color>
     <Color x:Key="BorderColor">#D4D4D4</Color>
+    <Color x:Key="BorderColor.Dark">#979797</Color>
     <Color x:Key="Disabled.BackgroundColor">#F4F4F4</Color>
     <Color x:Key="Disabled.BackgroundColorLight">#FFFFFF</Color>
     <Color x:Key="Disabled.BorderColor">#BCBCBC</Color>
