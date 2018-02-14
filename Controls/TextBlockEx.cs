@@ -258,6 +258,8 @@ namespace MCUTerm.Controls
         {
             Focusable = true;
             rows = originalRows;
+
+            text = "";
             selectedText = "";
 
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy,
