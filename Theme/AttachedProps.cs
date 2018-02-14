@@ -24,5 +24,12 @@ namespace ModenTheme
 
         public static bool GetIsToolWindow(DependencyObject obj) => (bool)obj.GetValue(IsToolWindowProperty);
         public static void SetIsToolWindow(DependencyObject obj, bool value) => obj.SetValue(IsToolWindowProperty, value);
+
+        // IsAltCaption
+        public static readonly DependencyProperty IsAltCaptionProperty = DependencyProperty.RegisterAttached(
+            "IsAltCaption", typeof(bool), typeof(Ext), new FrameworkPropertyMetadata(false));
+
+        public static bool GetIsAltCaption(DependencyObject obj) => (bool)obj.GetValue(IsAltCaptionProperty);
+        public static void SetIsAltCaption(DependencyObject obj, bool value) => obj.SetValue(IsAltCaptionProperty, value);
     }
 }

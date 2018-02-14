@@ -11,7 +11,7 @@
         SizeToContent="WidthAndHeight"
         FontFamily="Consolas"
         FontSize="12"
-        Foreground="{StaticResource MessageBox.ForegroundBrush}"
+        Foreground="{StaticResource ForegroundBrush}"
         WindowStartupLocation="CenterOwner"
         Style="{StaticResource WindowStyle}"
         theme:Ext.IsToolWindow="True"

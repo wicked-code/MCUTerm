@@ -46,6 +46,8 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="theme:Ext.IsToolWindow" Value="True">
                             <Setter Property="Width" Value="33"/>
+                        </Trigger>
+                        <Trigger Property="theme:Ext.IsAltCaption" Value="True">
                             <Setter Property="Foreground" Value="{StaticResource ForegroundBrush.Dark}"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -170,9 +172,12 @@
                             <Setter TargetName="RestoreButton" Property="Visibility" Value="Collapsed"/>
                             <Setter Property="ResizeMode" Value="NoResize"/>
                             <Setter TargetName="ResizeGrip" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="CloseButton" Property="theme:Ext.IsToolWindow" Value="True"/>
+                        </Trigger>
+                        <Trigger Property="theme:Ext.IsAltCaption" Value="True">
                             <Setter TargetName="Caption" Property="Foreground" Value="{StaticResource ForegroundBrush.Dark}"/>
                             <Setter TargetName="TitleBar" Property="Background" Value="{StaticResource TitleBarForegroundBrush}"/>
-                            <Setter TargetName="CloseButton" Property="theme:Ext.IsToolWindow" Value="True"/>
+                            <Setter TargetName="CloseButton" Property="theme:Ext.IsAltCaption" Value="True"/>
                         </Trigger>
                         <Trigger Property="theme:Ext.Image" Value="{x:Null}">
                             <Setter TargetName="Icon" Property="Visibility" Value="Visible"/>
