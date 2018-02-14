@@ -17,7 +17,10 @@
     <Geometry x:Key="Geometry.Delete">M6.1999817,0L16,9.8000031 25.799988,0 32,6.1999969 22.199982,16 32,25.800003 25.799988,32 16,22.199997 6.1999817,32 0,25.800003 9.7999878,16 0,6.1999969z</Geometry>
     <Geometry x:Key="Geometry.Add">M12.126984,0L19.872009,0 19.872009,12.128 32,12.128 32,19.872999 19.872009,19.872999 19.872009,31.999 12.126984,31.999 12.126984,19.872999 0,19.872999 0,12.128 12.126984,12.128z</Geometry>
     <Geometry x:Key="Geometry.WordWrap">M0,10.667H341.333V53.334H0z M0,266.667H128V309.334H0z M277.333,138.667H0v42.667h282.667c23.573,0,42.667,19.093,42.667,42.667c0,23.573-19.093,42.667-42.667,42.667h-48V224l-64,64l64,64v-42.667h42.667c47.04,0,85.333-38.293,85.333-85.333C362.667,176.96,324.373,138.667,277.333,138.667z</Geometry>
-
+    <Geometry x:Key="Geometry.Copy">M5.0000002,20.000021L16,20.000021 16,22.000021 5.0000002,22.000021z M5.0000002,16.000022L16,16.000022 16,18.000021 5.0000002,18.000021z M5.0000002,12.000022L16,12.000022 16,14.000022 5.0000002,14.000022z M20.999999,7.0000219L20.999999,25C20.999999,26.102999,20.103,27,18.999999,27L7.0000002,27 7.0000002,30.000021 23.999999,30.000021 23.999999,7.0000219z M7.023392,3.3906083L3.4139419,7.0000582 7.0050085,7.0000582z M9.0305388,1.9999999L8.9949973,9.0000544 1.9999999,9.0000544 1.9999999,25 19.001001,25 18.999999,1.9999999z M7.5860002,0L18.999999,0C20.103,0,20.999999,0.897,20.999999,1.9999999L20.999999,5.0000219 23.999999,5.0000219C25.103,5.0000222,25.999999,5.8970222,25.999999,7.0000219L25.999999,30.000021C25.999999,31.103022,25.103,32.000021,23.999999,32.000021L7.0000002,32.000021C5.8970001,32.000021,5.0000002,31.103022,5.0000002,30.000021L5.0000002,27 1.9999999,27C0.89700021,27,2.3841858E-07,26.102999,0,25L0,7.586z</Geometry>
+    <Geometry x:Key="Geometry.SelectAll">M7.4999891,23.099976L11.699995,23.099976 11.699995,24.5 7.4999891,24.5z M0,22.299988L1.4000225,22.299988 1.4000225,23.099976 3.4000197,23.099976 3.4000197,24.5 0,24.5z M0,14L1.4000225,14 1.4000225,18.200012 0,18.200012z M19.299959,13.899963L20.699982,13.899963 20.699982,18 19.299959,18z M11.499984,13.700012L25.6,22 20.99997,23.5 26.099999,29.799988 23.600002,32 18.60001,25.5 15.19999,29.599976z M0,5.7000122L1.4000225,5.7000122 1.4000225,9.8999634 0,9.8999634z M19.299959,5.5L20.699982,5.5 20.699982,9.7000122 19.299959,9.7000122z M16.499977,0L20.699982,0 20.699982,1.3999634 19.999971,1.3999634 16.499977,1.3999634z M8.2000008,0L12.400006,0 12.400006,1.3999634 8.2000008,1.3999634z M0,0L3.9999944,0 3.9999944,1.3999634 1.4000225,1.3999634 1.4000225,1.5 0,1.5z</Geometry>
+    <Geometry x:Key="Geometry.SelectWord">M27.440002,23.633999L32,23.633999 32,28.353 27.440002,28.353z M0,23.633999L4.5610352,23.633999 4.5610352,28.353 0,28.353z M6.9980469,3.9999996L25.004028,3.9999996 25.004028,8.6019962 18.356018,8.6019962 18.356018,24.351993 13.585999,24.351993 13.585999,8.6019962 6.9980469,8.6019962z M27.440002,0L32,0 32,4.7190011 27.440002,4.7190011z M0,0L4.5610352,0 4.5610352,4.7190011 0,4.7190011z</Geometry>
+   
     <Path x:Key="Icon.MatchCase" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkBlueBrush}" 
           Stroke="{StaticResource Icon.LightGrayBrush}" StrokeThickness="0.5" RenderTransformOrigin="0.5,0.5" Data="{StaticResource Geometry.MatchCase}"/>
     <Path x:Key="Icon.Terminal" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.WindowTitleBrush.LightBlue}" RenderTransformOrigin="0.5,0.5"
@@ -44,6 +47,18 @@
           Data="{StaticResource Geometry.Add}"/>
     <Path x:Key="Icon.WordWrap" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkBlueBrush}" RenderTransformOrigin="0.5,0.5"
           Data="{StaticResource Geometry.WordWrap}"/>
+    <Path x:Key="Icon.Copy" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkGrayBrush}" RenderTransformOrigin="0.5,0.5"
+          Data="{StaticResource Geometry.Copy}"/>
+    <Path x:Key="Icon.CopyDisabled" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DisabledBrush}" RenderTransformOrigin="0.5,0.5"
+          Data="{StaticResource Geometry.Copy}"/>
+    <Path x:Key="Icon.SelectAll" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkGrayBrush}" RenderTransformOrigin="0.5,0.5"
+          Data="{StaticResource Geometry.SelectAll}"/>
+    <Path x:Key="Icon.SelectAllDisabled" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DisabledBrush}" RenderTransformOrigin="0.5,0.5"
+          Data="{StaticResource Geometry.SelectAll}"/>
+    <Path x:Key="Icon.SelectWord" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkGrayBrush}" RenderTransformOrigin="0.5,0.5"
+          Data="{StaticResource Geometry.SelectWord}"/>
+    <Path x:Key="Icon.SelectWordDisabled" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DisabledBrush}" RenderTransformOrigin="0.5,0.5"
+          Data="{StaticResource Geometry.SelectWord}"/>
 
     <Path x:Key="Icon.RestartRed" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.RedBrush}" RenderTransform="0.95 0 0 0.95 1 0"
           RenderTransformOrigin="0.5,0.5" Data="{StaticResource Geometry.Restart}"/>
