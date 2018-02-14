@@ -8,6 +8,7 @@
 
     <Style TargetType="controls:TextBlockEx">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="CornerBrush" Value="{StaticResource BackgroundBrush}"/>
         <Setter Property="SelectionBackground" Value="{StaticResource TextBox.Selection.Background}"/>
         <Setter Property="HighlightBackground" Value="{StaticResource TextBox.Highlight.Background}"/>
         <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>

@@ -173,6 +173,15 @@ namespace MCUTerm.Controls
           DependencyProperty.Register("MatchCaseHighlighted", typeof(bool), typeof(TextBlockEx),
                                       new FrameworkPropertyMetadata(true, OnHighlightTextChanged));
 
+        public Brush CornerBrush
+        {
+            get => (Brush)base.GetValue(CornerBrushProperty);
+            set => base.SetValue(CornerBrushProperty, value);
+        }
+
+        public static readonly DependencyProperty CornerBrushProperty =
+          DependencyProperty.Register("CornerBrush", typeof(Brush), typeof(TextBlockEx),
+                                      new FrameworkPropertyMetadata((Brush)null, FrameworkPropertyMetadataOptions.AffectsRender));
 
         public Brush SelectionBackground
         {
@@ -388,6 +397,8 @@ namespace MCUTerm.Controls
         {
             if (glyphHelper != null)
             {
+                UpdateScrollbarsVisibility(arrangeBounds.Width, arrangeBounds.Height);
+
                 double newHViewportSize = (int)((arrangeBounds.Width - _vScroll.DesiredSize.Width) / glyphHelper.Width);
                 double newVViewportSize = (int)((arrangeBounds.Height - _hScroll.DesiredSize.Height) / glyphHelper.Height);
 
@@ -411,14 +422,22 @@ namespace MCUTerm.Controls
         {
             if (WordWrap == true && info.WidthChanged == true)
                 UpdateContent();
-
-            UpdateScrollbarsVisibility(info.NewSize.Width, info.NewSize.Height);
         }
 
         protected override void OnRender(DrawingContext dc)
         {
-            Rect rect = new Rect(0, 0, Math.Max(0.0, RenderSize.Width - _vScroll.ActualWidth), Math.Max(0.0, RenderSize.Height - _hScroll.ActualHeight));
+            Rect rect = new Rect(0, 0, Math.Max(0.0, RenderSize.Width - _vScroll.ActualWidth),
+                                       Math.Max(0.0, RenderSize.Height - _hScroll.ActualHeight));
             dc.DrawRectangle(Background, null, rect);
+
+            if (_vScroll.Visibility == Visibility.Visible && _hScroll.Visibility == Visibility.Visible)
+            {
+                Rect cornerRect = new Rect(Math.Max(0.0, RenderSize.Width - _vScroll.ActualWidth),
+                                Math.Max(0.0, RenderSize.Height - _hScroll.ActualHeight),
+                                _vScroll.ActualWidth, _hScroll.ActualHeight);
+                dc.DrawRectangle(CornerBrush, null, cornerRect);
+            }
+
             if (rows.Count() == 0)
                 return;
 
@@ -690,7 +709,7 @@ namespace MCUTerm.Controls
             else
                 _hScroll.Visibility = Visibility.Collapsed;
 
-            if (rows.Count() * glyphHelper.Height >= height)
+            if (rows.Count() * glyphHelper.Height >= height - _hScroll.Height)
                 _vScroll.Visibility = Visibility.Visible;
             else
                 _vScroll.Visibility = Visibility.Collapsed;
