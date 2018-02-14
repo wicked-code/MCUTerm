@@ -69,6 +69,11 @@ namespace MCUTerm.Controls
                 return (GlyphRun)glyphTryCreate.Invoke(null, new object[] { glyphTypeface, 0, false, fontSize, (float)dpiScaleX, indices, point, widths,
                     null, null, null, null, null, null, TextFormattingMode.Display });
             }
+
+            public void OnDpiChanged(double dpiScaleX)
+            {
+                this.dpiScaleX = dpiScaleX;
+            }
         }
 
         protected class Glyph
@@ -422,6 +427,12 @@ namespace MCUTerm.Controls
         {
             if (WordWrap == true && info.WidthChanged == true)
                 UpdateContent();
+        }
+
+        protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+        {
+            if (glyphHelper != null)
+                glyphHelper.OnDpiChanged(newDpi.DpiScaleX);
         }
 
         protected override void OnRender(DrawingContext dc)
