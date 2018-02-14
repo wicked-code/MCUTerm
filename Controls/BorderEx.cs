@@ -23,6 +23,32 @@ namespace MCUTerm.Controls
             else
                 return base.MeasureOverride(availableSize);
         }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if (SnapsToDevicePixels == false)
+                return base.ArrangeOverride(finalSize);
+
+            //  arrange child
+            UIElement child = Child;
+            if (child != null)
+            {
+                double dpiScaleX = VisualTreeHelper.GetDpi(this).DpiScaleX;
+                Thickness roundedThickness = new Thickness(
+                    DPIHelper.RoundByPixelBound(BorderThickness.Left, dpiScaleX),
+                    DPIHelper.RoundByPixelBound(BorderThickness.Top, dpiScaleX),
+                    DPIHelper.RoundByPixelBound(BorderThickness.Right, dpiScaleX),
+                    DPIHelper.RoundByPixelBound(BorderThickness.Bottom, dpiScaleX)
+                );
+
+                Rect childRect = new Rect(roundedThickness.Left, roundedThickness.Top,
+                                          Math.Max(0.0, finalSize.Width - roundedThickness.Left - roundedThickness.Right),
+                                          Math.Max(0.0, finalSize.Height - roundedThickness.Top - roundedThickness.Bottom));
+                child.Arrange(childRect);
+            }
+
+            return finalSize;
+        }
     }
 
     public class ShadowBorder : Decorator
@@ -57,7 +83,7 @@ namespace MCUTerm.Controls
         {
             double dpiScaleX = VisualTreeHelper.GetDpi(this).DpiScaleX;
 
-            double thickness = RoundByPixelBound(ShadowThickness, dpiScaleX);
+            double thickness = DPIHelper.RoundByPixelBound(ShadowThickness, dpiScaleX);
             double thickness2x = thickness + thickness;
             Rect rect = new Rect(thickness, thickness, RenderSize.Width - thickness2x, RenderSize.Height - thickness2x);
             dc.DrawRectangle(new SolidColorBrush(Colors.White), null, rect);
@@ -80,15 +106,10 @@ namespace MCUTerm.Controls
             }
         }
 
-        protected double RoundByPixelBound(double value, double dpiScaleX)
-        {
-            return Math.Round(value * dpiScaleX) / dpiScaleX;
-        }
-
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
         {
             double dpiScaleX = VisualTreeHelper.GetDpi(this).DpiScaleX;
-            double thickness = RoundByPixelBound(ShadowThickness, dpiScaleX);
+            double thickness = DPIHelper.RoundByPixelBound(ShadowThickness, dpiScaleX);
 
             if (hitTestParameters.HitPoint.X <= thickness || hitTestParameters.HitPoint.X >= RenderSize.Width - thickness ||
                 hitTestParameters.HitPoint.Y <= thickness || hitTestParameters.HitPoint.Y >= RenderSize.Height - thickness)
@@ -102,7 +123,7 @@ namespace MCUTerm.Controls
         protected override Size MeasureOverride(Size constraint)
         {
             double dpiScaleX = VisualTreeHelper.GetDpi(this).DpiScaleX;
-            double thickness = RoundByPixelBound(ShadowThickness, dpiScaleX);
+            double thickness = DPIHelper.RoundByPixelBound(ShadowThickness, dpiScaleX);
             double thickness2x = thickness + thickness;
 
             UIElement child = Child;
@@ -115,8 +136,8 @@ namespace MCUTerm.Controls
                 child.Measure(childConstraint);
                 Size childSize = child.DesiredSize;
 
-                mySize.Width += RoundByPixelBound(childSize.Width, dpiScaleX);
-                mySize.Height += RoundByPixelBound(childSize.Height, dpiScaleX);
+                mySize.Width += DPIHelper.RoundByPixelBound(childSize.Width, dpiScaleX);
+                mySize.Height += DPIHelper.RoundByPixelBound(childSize.Height, dpiScaleX);
             }
 
             return mySize;
@@ -129,11 +150,11 @@ namespace MCUTerm.Controls
             if (child != null)
             {
                 double dpiScaleX = VisualTreeHelper.GetDpi(this).DpiScaleX;
-                double thickness = RoundByPixelBound(ShadowThickness, dpiScaleX);
+                double thickness = DPIHelper.RoundByPixelBound(ShadowThickness, dpiScaleX);
                 double thickness2x = thickness + thickness;
 
-                double width = RoundByPixelBound(finalSize.Width, dpiScaleX);
-                double height = RoundByPixelBound(finalSize.Height, dpiScaleX);
+                double width = DPIHelper.RoundByPixelBound(finalSize.Width, dpiScaleX);
+                double height = DPIHelper.RoundByPixelBound(finalSize.Height, dpiScaleX);
                 Rect childRect = new Rect(thickness, thickness,
                                           Math.Max(0.0, width - thickness2x),
                                           Math.Max(0.0, height - thickness2x));

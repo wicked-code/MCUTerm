@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
-using System.Globalization;
 using System.Windows.Controls.Primitives;
 
 namespace MCUTerm.Controls
@@ -46,9 +45,9 @@ namespace MCUTerm.Controls
 
                 glyphIndexMap = glyphTypeface.CharacterToGlyphMap;
 
-                width = Math.Round(glyphTypeface.AdvanceWidths['w'] * fontSize * dpiScaleX, MidpointRounding.ToEven) / dpiScaleX;
-                height = Math.Round(glyphTypeface.Height * fontSize * dpiScaleX, MidpointRounding.ToEven) / dpiScaleX;
-                baseline = Math.Round(glyphTypeface.Baseline * fontSize * dpiScaleX, MidpointRounding.ToEven) / dpiScaleX;
+                width = DPIHelper.RoundByPixelBound(glyphTypeface.AdvanceWidths['w'] * fontSize, dpiScaleX);
+                height = DPIHelper.RoundByPixelBound(glyphTypeface.Height * fontSize, dpiScaleX);
+                baseline = DPIHelper.RoundByPixelBound(glyphTypeface.Baseline * fontSize, dpiScaleX);
 
                 glyphTryCreate = typeof(GlyphRun).GetMethod("TryCreate", BindingFlags.Static | BindingFlags.NonPublic, null,
                     new[] { typeof(GlyphTypeface), typeof(Int32), typeof(Boolean), typeof(Double), typeof(Single), typeof(IList<ushort>),
@@ -423,16 +422,16 @@ namespace MCUTerm.Controls
             return arrangeBounds;
         }
 
-        protected override void OnRenderSizeChanged(SizeChangedInfo info)
-        {
-            if (WordWrap == true && info.WidthChanged == true)
-                UpdateContent();
-        }
-
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
         {
             if (glyphHelper != null)
                 glyphHelper.OnDpiChanged(newDpi.DpiScaleX);
+        }
+
+        protected override void OnRenderSizeChanged(SizeChangedInfo info)
+        {
+            if (WordWrap == true && info.WidthChanged == true)
+                UpdateContent();
         }
 
         protected override void OnRender(DrawingContext dc)
