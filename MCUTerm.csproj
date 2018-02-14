@@ -200,9 +200,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\terminal.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\terminal.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

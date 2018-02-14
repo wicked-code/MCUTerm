@@ -20,11 +20,11 @@
 
     <Path x:Key="Icon.MatchCase" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkBlueBrush}" 
           Stroke="{StaticResource Icon.LightGrayBrush}" StrokeThickness="0.5" RenderTransformOrigin="0.5,0.5" Data="{StaticResource Geometry.MatchCase}"/>
-    <Path x:Key="Icon.TerminalGray" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkGrayBrush}" RenderTransformOrigin="0.5,0.5"
+    <Path x:Key="Icon.Terminal" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.WindowTitleBrush.LightBlue}" RenderTransformOrigin="0.5,0.5"
           Data="{StaticResource Geometry.Terminal}"/>
     <Path x:Key="Icon.Gear" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkGrayBrush}" RenderTransformOrigin="0.5,0.5"
           Data="{StaticResource Geometry.Gear}"/>
-    <Path x:Key="Icon.GearTitle" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.WindowTitleBrush}" RenderTransformOrigin="0.5,0.5"
+    <Path x:Key="Icon.GearTitle" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.WindowTitleBrush.Gray}" RenderTransformOrigin="0.5,0.5"
           Data="{StaticResource Geometry.Gear}"/>
     <Path x:Key="Icon.Hex" x:Shared="false" Stretch="Uniform" Fill="{StaticResource Icon.DarkBlueBrush}" RenderTransformOrigin="0.5,0.5"
           Data="{StaticResource Geometry.Hex}"/>

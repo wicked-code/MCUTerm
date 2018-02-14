@@ -107,13 +107,13 @@
                                                    MouseUp="IconMouseUp" MouseLeftButtonDown="IconMouseLeftButtonDown"
                                                    Source="{TemplateBinding Icon}"
                                                    HorizontalAlignment="Right" WindowChrome.IsHitTestVisibleInChrome="True"
+                                                   Visibility="Collapsed"
                                             />
                                             <ContentControl x:Name="IconPath" Grid.Column="0"
                                                    Margin="10,0" Width="24" Height="24"
                                                    Content="{TemplateBinding theme:Ext.Image}"
                                                    MouseUp="IconMouseUp" MouseLeftButtonDown="IconMouseLeftButtonDown"
                                                    HorizontalAlignment="Right" WindowChrome.IsHitTestVisibleInChrome="True"
-                                                   Visibility="Collapsed"
                                             />
                                             <TextBlock x:Name="Caption" Grid.Column="1"
                                                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4,0,0,0"
@@ -174,10 +174,20 @@
                             <Setter TargetName="TitleBar" Property="Background" Value="{StaticResource TitleBarForegroundBrush}"/>
                             <Setter TargetName="CloseButton" Property="theme:Ext.IsToolWindow" Value="True"/>
                         </Trigger>
-                        <Trigger Property="Icon" Value="{x:Null}">
-                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed"/>
-                            <Setter TargetName="IconPath" Property="Visibility" Value="Visible"/>
+                        <Trigger Property="theme:Ext.Image" Value="{x:Null}">
+                            <Setter TargetName="Icon" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="IconPath" Property="Visibility" Value="Collapsed"/>
                         </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="theme:Ext.Image" Value="{x:Null}"/>
+                                <Condition Property="Icon" Value="{x:Null}"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Caption" Property="HorizontalAlignment" Value="Left"/>
+                            <Setter TargetName="Caption" Property="Margin" Value="12,0,0,0"/>
+                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="IconPath" Property="Visibility" Value="Collapsed"/>
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
