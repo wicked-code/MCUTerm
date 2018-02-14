@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
@@ -25,6 +26,10 @@ namespace MCUTerm
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            // TODO: remove in case of localization
+            // Prevent mixed language output
+            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("en-US");
+
             if (e.Args.Length == 0)
             {
                 ctsPipeServer = new CancellationTokenSource();
