@@ -613,7 +613,7 @@ namespace MCUTerm.Controls
             mousePoint.Y = Math.Max(0, mousePoint.Y - Padding.Top);
             mousePoint.X = Math.Max(0, mousePoint.X - Padding.Left);
 
-            int row = (int)(mousePoint.Y / glyphHelper.Height) + _verticalOffset;
+            int row = Math.Min((int)(mousePoint.Y / glyphHelper.Height) + _verticalOffset, rows.Count() - 1);
 
             int position = 0;
             for (int i = 0; i < row; i++)
