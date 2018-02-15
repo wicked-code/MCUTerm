@@ -308,12 +308,8 @@ namespace MCUTerm.Controls
 
         public void AddText(string text, Brush background, Brush foreground)
         {
-            if (text.Length == 0)
+            if (text.Length == 0 || glyphHelper == null)
                 return;
-
-            double dpiScaleX = VisualTreeHelper.GetDpi(this).DpiScaleX;
-            if (glyphHelper == null)
-                glyphHelper = new GlyphHelper(FontFamily, FontStyle, FontWeight, FontStretch, FontSize, dpiScaleX);
 
             if (originalRows.Count() == 0)
                 originalRows.Add(new Row());
@@ -422,6 +418,14 @@ namespace MCUTerm.Controls
             _hScroll.Arrange(new Rect(0, arrangeBounds.Height - _hScroll.DesiredSize.Height, arrangeBounds.Width - _vScroll.DesiredSize.Width, _hScroll.DesiredSize.Height));
             _vScroll.Arrange(new Rect(arrangeBounds.Width - _vScroll.DesiredSize.Width, 0, _vScroll.DesiredSize.Width, arrangeBounds.Height - _hScroll.DesiredSize.Height));
             return arrangeBounds;
+        }
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+
+            double dpiScaleX = VisualTreeHelper.GetDpi(this).DpiScaleX;
+            glyphHelper = new GlyphHelper(FontFamily, FontStyle, FontWeight, FontStretch, FontSize, dpiScaleX);
         }
 
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
