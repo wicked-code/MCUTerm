@@ -379,7 +379,6 @@ namespace MCUTerm.Controls
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
         {
             Point pt = hitTestParameters.HitPoint;
-
             if (pt.X >= 0 && pt.X < (ActualWidth - _vScroll.ActualWidth) && pt.Y >= 0 && pt.Y < (ActualHeight - _hScroll.ActualHeight))
             {
                 return new PointHitTestResult(this, pt);
@@ -404,8 +403,8 @@ namespace MCUTerm.Controls
             {
                 UpdateScrollbarsVisibility(arrangeBounds.Width, arrangeBounds.Height);
 
-                double newHViewportSize = (int)((arrangeBounds.Width - _vScroll.DesiredSize.Width) / glyphHelper.Width);
-                double newVViewportSize = (int)((arrangeBounds.Height - _hScroll.DesiredSize.Height) / glyphHelper.Height);
+                double newHViewportSize = (int)Math.Max(0, ((arrangeBounds.Width - _vScroll.DesiredSize.Width - Padding.Left - Padding.Right) / glyphHelper.Width));
+                double newVViewportSize = (int)Math.Max(0, ((arrangeBounds.Height - _hScroll.DesiredSize.Height - Padding.Top - Padding.Bottom) / glyphHelper.Height));
 
                 bool updateRange = false;
                 if (newHViewportSize != _hScroll.ViewportSize || newVViewportSize != _vScroll.ViewportSize)
@@ -452,17 +451,19 @@ namespace MCUTerm.Controls
             if (rows.Count() == 0)
                 return;
 
-            double y = 0;
+            double y = Padding.Top;
+            double maxX = rect.Width - Padding.Right;
+            double maxY = rect.Height - Padding.Bottom;
             for (int rowIndex = _verticalOffset; rowIndex < rows.Count(); rowIndex++)
             {
-                if (y + glyphHelper.Height >= rect.Height)
+                if (y + glyphHelper.Height >= maxY)
                     break;
 
-                double x = 0;
+                double x = Padding.Left;
                 Row row = rows[rowIndex];
                 for (int glyphIndex = _horizontalOffset; glyphIndex < row.glyphs.Count(); glyphIndex++)
                 {
-                    if (x + glyphHelper.Width >= rect.Width)
+                    if (x + glyphHelper.Width >= maxX)
                         break;
 
                     Glyph glyph = row.glyphs[glyphIndex];
@@ -579,6 +580,9 @@ namespace MCUTerm.Controls
 
         protected int GetPositionFromPoint(Point mousePoint)
         {
+            mousePoint.Y = Math.Max(0, mousePoint.Y - Padding.Top);
+            mousePoint.X = Math.Max(0, mousePoint.X - Padding.Left);
+
             int row = (int)(mousePoint.Y / glyphHelper.Height) + _verticalOffset;
 
             int position = 0;
@@ -715,12 +719,14 @@ namespace MCUTerm.Controls
             if (glyphHelper == null)
                 return;
 
-            if (_maxWidth * glyphHelper.Width >= width)
+            double paddingWidth = Padding.Left + Padding.Right;
+            if (_maxWidth * glyphHelper.Width + paddingWidth >= width)
                 _hScroll.Visibility = Visibility.Visible;
             else
                 _hScroll.Visibility = Visibility.Collapsed;
 
-            if (rows.Count() * glyphHelper.Height >= height - _hScroll.Height)
+            double paddingHeight = Padding.Top + Padding.Bottom;
+            if (rows.Count() * glyphHelper.Height + paddingHeight >= height - _hScroll.Height)
                 _vScroll.Visibility = Visibility.Visible;
             else
                 _vScroll.Visibility = Visibility.Collapsed;

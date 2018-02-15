@@ -154,7 +154,7 @@
             </StackPanel>
         </Border>
         <controls:BorderEx Grid.Row="1" Margin="5,0">
-            <controls:TextBlockEx x:Name="ConsoleText" TabIndex="6"
+            <controls:TextBlockEx x:Name="ConsoleText" TabIndex="6" Padding="2"
                                       HighlightedText="{Binding Text, ElementName=Filter}"
                                       MatchCaseHighlighted="{Binding Source={StaticResource Settings}, Path=Default.FilterMatchCase}"
                                       DisableFilterHighlighted="{Binding Source={StaticResource Settings}, Path=Default.DisableFilter}"
