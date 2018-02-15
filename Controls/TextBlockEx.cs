@@ -614,6 +614,9 @@ namespace MCUTerm.Controls
 
         protected int GetPositionFromPoint(Point mousePoint)
         {
+            if (rows.Count() == 0)
+                return 0;
+
             mousePoint.Y = Math.Max(0, mousePoint.Y - Padding.Top);
             mousePoint.X = Math.Max(0, mousePoint.X - Padding.Left);
 
