@@ -286,6 +286,8 @@ namespace MCUTerm.Controls
             _vScroll.Orientation = Orientation.Vertical;
             _hScroll.ValueChanged += OnHScrollValueChanged;
             _vScroll.ValueChanged += OnVScrollValueChanged;
+            _hScroll.SmallChange = 1;
+            _vScroll.SmallChange = 1;
 
             _visuals = new VisualCollection(this);
             _visuals.Add(_hScroll);
@@ -562,6 +564,34 @@ namespace MCUTerm.Controls
                 UpdateSelection(selectionDragStart, newPosition - selectionDragStart);
             else
                 UpdateSelection(newPosition, selectionDragStart - newPosition);
+        }
+
+        private int _wheelDelta = 0;
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            if (_vScroll.Visibility != Visibility.Visible)
+                return;
+
+            int lineScroll = 0;
+            _wheelDelta += e.Delta;
+            while(Math.Abs(_wheelDelta) >= Mouse.MouseWheelDeltaForOneLine)
+            {
+                if (_wheelDelta > 0)
+                {
+                    _wheelDelta -= Mouse.MouseWheelDeltaForOneLine;
+                    lineScroll++;
+                }
+                else
+                {
+                    _wheelDelta += Mouse.MouseWheelDeltaForOneLine;
+                    lineScroll--;
+                }
+            }
+
+            if (lineScroll == 0)
+                return;
+
+            _vScroll.Value = _vScroll.Value - lineScroll;
         }
 
         protected void SelectWord(int position)
