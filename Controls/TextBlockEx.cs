@@ -134,8 +134,7 @@ namespace MCUTerm.Controls
         protected int selectionLength;
         protected string selectedText;
 
-        public static readonly RoutedUICommand SelectWordCommand = new RoutedUICommand("Select Word", "SelectWord",
-                                typeof(TextBlockEx), new InputGestureCollection() { new KeyGesture(Key.W, ModifierKeys.Control) });
+        public static readonly RoutedUICommand SelectWordCommand = new RoutedUICommand("Select Word", "SelectWord", typeof(TextBlockEx));
 
         public string HighlightedText
         {
