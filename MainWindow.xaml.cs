@@ -373,7 +373,7 @@ namespace MCUTerm
             Size desiredSize = element.DesiredSize;
             if (desiredSize.Width != MinWidth)
             {
-                if (SizeToContent != SizeToContent.Width && ActualWidth == MinWidth)
+                if (SizeToContent != SizeToContent.Width && ActualWidth == MinWidth && WindowState == WindowState.Normal)
                     SizeToContent = SizeToContent.Width;
 
                 MinWidth = desiredSize.Width;
