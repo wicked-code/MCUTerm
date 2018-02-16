@@ -51,18 +51,13 @@ namespace ModenTheme
             {
                 // Make sure window doesn't overlap with the taskbar.
                 var screen = System.Windows.Forms.Screen.FromHandle(handle);
-                if (screen.Primary)
-                {
-                    containerBorder.Margin = new Thickness(
-                        SystemParameters.WorkArea.Left + 7 - 1,
-                        SystemParameters.WorkArea.Top + 7 - 1,
-                        (SystemParameters.PrimaryScreenWidth - SystemParameters.WorkArea.Right) + 7 - 2,
-                        (SystemParameters.PrimaryScreenHeight - SystemParameters.WorkArea.Bottom) + 7 - 2);
-                }
+                containerBorder.Margin = new Thickness(7 - 1, 7 - 1,
+                    (screen.Bounds.Width - screen.WorkingArea.Width) + 7 - 2,
+                    (screen.Bounds.Height - screen.WorkingArea.Height) + 7 - 2);
             }
             else
             {
-                containerBorder.Margin = new Thickness(7, 7, 7, 7);
+                containerBorder.Margin = new Thickness(0, 0, 0, 0);
             }
         }
 
