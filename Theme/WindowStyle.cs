@@ -3,6 +3,8 @@ using System.Windows.Input;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
+using MCUTerm.Controls;
 
 namespace ModenTheme
 {
@@ -49,11 +51,15 @@ namespace ModenTheme
 
             if (w.WindowState == WindowState.Maximized)
             {
+                double dpiScaleX = VisualTreeHelper.GetDpi(w).DpiScaleX;
+                double dpiScaleY = VisualTreeHelper.GetDpi(w).DpiScaleY;
                 // Make sure window doesn't overlap with the taskbar.
                 var screen = System.Windows.Forms.Screen.FromHandle(handle);
-                containerBorder.Margin = new Thickness(7 - 1, 7 - 1,
-                    (screen.Bounds.Width - screen.WorkingArea.Width) + 7 - 2,
-                    (screen.Bounds.Height - screen.WorkingArea.Height) + 7 - 2);
+                containerBorder.Margin = new Thickness(
+                    DPIHelper.RoundByPixelBound(7 - 1, dpiScaleX),
+                    DPIHelper.RoundByPixelBound(7 - 1, dpiScaleY),
+                    DPIHelper.RoundByPixelBound((screen.Bounds.Width - screen.WorkingArea.Width) / dpiScaleX + 7 - 1, dpiScaleX),
+                    DPIHelper.RoundByPixelBound((screen.Bounds.Height - screen.WorkingArea.Height) / dpiScaleY + 7 - 1, dpiScaleY));
             }
             else
             {
