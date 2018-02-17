@@ -296,9 +296,10 @@ namespace MCUTerm.Controls
 
         public void ClearText()
         {
+            UpdateSelection(0, 0);
+
             originalText = "";
             originalRows.Clear();
-            UpdateSelection(0, 0);
             UpdateContent();
         }
 
