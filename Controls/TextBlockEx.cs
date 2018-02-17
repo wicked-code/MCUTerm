@@ -476,7 +476,7 @@ namespace MCUTerm.Controls
                     Glyph glyph = row.glyphs[glyphIndex];
 
                     Brush background = glyph.highlighted ? HighlightBackground : glyph.background;
-                    Brush foreground = glyph.highlighted ? HighlightForeground : glyph.background;
+                    Brush foreground = glyph.highlighted ? HighlightForeground : glyph.foreground;
 
                     if (glyph.selected)
                     {
