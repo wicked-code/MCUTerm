@@ -341,7 +341,7 @@ namespace MCUTerm.Controls
 
                 while (repeat > 0)
                 {
-                    originalRows.Last().Add(symbol, glyphHelper.GetGlyphIndex(symbol), background, foreground);
+                    originalRows.Last().Add(symbol, glyphHelper.GetGlyphIndex(symbol), foreground, background);
                     originalText += symbol;
                     repeat--;
                 }
