@@ -123,17 +123,17 @@ namespace MCUTerm.Controls
 
         protected GlyphHelper glyphHelper;
 
-        protected string text;
-        protected List<Row> rows;
+        protected string text = "";
+        protected List<Row> rows = new List<Row>();
 
-        protected string originalText;
+        protected string originalText = "";
         protected List<Row> originalRows = new List<Row>();
 
         public string Text => text;
 
         protected int selectionStart;
         protected int selectionLength;
-        protected string selectedText;
+        protected string selectedText = "";
 
         public static readonly RoutedUICommand SelectWordCommand = new RoutedUICommand("Select Word", "SelectWord", typeof(TextBlockEx));
 
@@ -258,9 +258,6 @@ namespace MCUTerm.Controls
         {
             Focusable = true;
             rows = originalRows;
-
-            text = "";
-            selectedText = "";
 
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy,
                 (sender, e) => { Clipboard.SetText(((TextBlockEx)sender).SelectedText); },
