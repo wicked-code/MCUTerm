@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
 using System.Windows.Controls.Primitives;
+using System.Text;
 
 namespace MCUTerm.Controls
 {
@@ -316,6 +317,9 @@ namespace MCUTerm.Controls
             if (originalRows.Count() == 0)
                 originalRows.Add(new Row());
 
+            StringBuilder newText = new StringBuilder(originalText.Length + text.Length);
+            newText.Append(originalText);
+
             int pos = 0;
             while (pos < text.Length)
             {
@@ -323,10 +327,10 @@ namespace MCUTerm.Controls
                 if (symbol == '\r' || symbol == '\n')
                 {
                     originalRows.Add(new Row());
-                    originalText += '\n';
+                    newText.Append('\n');
 
                     if (pos < text.Length && symbol != text[pos] &&
-                        (text[pos] == '\n' || text[pos] != '\r'))
+                        (text[pos] == '\n' || text[pos] == '\r'))
                     {
                         pos++;
                     }
@@ -344,11 +348,12 @@ namespace MCUTerm.Controls
                 while (repeat > 0)
                 {
                     originalRows.Last().Add(symbol, glyphHelper.GetGlyphIndex(symbol), foreground, background);
-                    originalText += symbol;
+                    newText.Append(symbol);
                     repeat--;
                 }
             }
 
+            originalText = newText.ToString();
             UpdateContent();
         }
 

@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Threading;
+using System.Text;
 
 namespace MCUTerm
 {
@@ -290,25 +291,25 @@ namespace MCUTerm
         {
             bool hexOutput = Properties.Settings.Default.HexOutput;
 
-            string newText = "";
+            StringBuilder newText = new StringBuilder(text.Length);
             for (int pos = 0; pos < text.Length; pos++)
             {
                 Char c = text[pos];
 
                 if (hexOutput)
-                    newText += String.Format("{0:X2} ", (int)c);
+                    newText.AppendFormat("{0:X2} ", (int)c);
                 else if (c < 32 && charNames[c] != "")
                 {
-                    ConsoleText.AddText(newText);
+                    ConsoleText.AddText(newText.ToString());
                     ConsoleText.AddText('<' + charNames[c] + '>', Brushes.OrangeRed, null);
 
-                    newText = "";
+                    newText.Clear();
                 }
                 else
-                    newText += c;
+                    newText.Append(c);
             }
 
-            ConsoleText.AddText(newText);
+            ConsoleText.AddText(newText.ToString());
         }
 
         private enum SendPostifx {AppendNothing = 0, AppendCR, AppendLF, AppendCRLF};
