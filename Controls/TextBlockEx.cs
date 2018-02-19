@@ -782,7 +782,7 @@ namespace MCUTerm.Controls
             var comparision = MatchCaseHighlighted ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
             rows = new List<Row>();
-            text = "";
+            StringBuilder newText = new StringBuilder(originalText.Length);
 
             int textPos = 0;
             foreach (var row in originalRows)
@@ -794,9 +794,9 @@ namespace MCUTerm.Controls
                     if (String.Compare(originalText, posInRow, highlightedText, 0, highlightedText.Length, comparision) == 0)
                     {
                         if (row == originalRows.Last())
-                            text += originalText.Substring(textPos, row.TextLength - 1);
+                            newText.Append(originalText.Substring(textPos, row.TextLength - 1));
                         else
-                            text += originalText.Substring(textPos, row.TextLength);
+                            newText.Append(originalText.Substring(textPos, row.TextLength));
 
                         rows.Add(row);
                         break;
@@ -805,9 +805,10 @@ namespace MCUTerm.Controls
                     posInRow++;
                 }
 
-                textPos += row.TextLength;
+                textPos = lastPosInRow;
             }
 
+            text = newText.ToString();
             if (text.Length > 0 && text.Last() == '\n')
                 rows.Add(new Row());
         }
@@ -818,15 +819,27 @@ namespace MCUTerm.Controls
             var comparision = MatchCaseHighlighted ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
             int textPos = 0;
-            while (textPos < Text.Length)
+            for(int rowIndex = 0; rowIndex < rows.Count; rowIndex++)
             {
-                if (String.Compare(Text, textPos, highlightedText, 0, highlightedText.Length, comparision) == 0)
+                Row row = rows[rowIndex];
+
+                int posInRow = textPos;
+                int lastPosInRow = posInRow + row.TextLength;
+                while (posInRow < lastPosInRow)
                 {
-                    MarkRange(MarkType.Highlighted, true, textPos, highlightedText.Length);
-                    textPos += highlightedText.Length - 1;
+                    if (String.Compare(text, posInRow, highlightedText, 0, highlightedText.Length, comparision) == 0)
+                    {
+                        int startPos = posInRow - textPos;
+                        MarkSymbols(MarkType.Highlighted, true, rowIndex, startPos, startPos + highlightedText.Length);
+                        posInRow += highlightedText.Length;
+                    }
+                    else
+                    {
+                        posInRow++;
+                    }
                 }
 
-                textPos++;
+                textPos = lastPosInRow;
             }
         }
 
