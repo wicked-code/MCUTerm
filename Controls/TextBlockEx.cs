@@ -260,7 +260,7 @@ namespace MCUTerm.Controls
             rows = originalRows;
 
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy,
-                (sender, e) => { Clipboard.SetText(((TextBlockEx)sender).SelectedText); },
+                (sender, e) => { Clipboard.SetText(((TextBlockEx)sender).SelectedText.Replace("\n", "\r\n")); },
                 (sender, e) => { e.CanExecute = ((TextBlockEx)sender).SelectedText.Length > 0; }
             ));
 
