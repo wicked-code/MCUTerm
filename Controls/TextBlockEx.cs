@@ -846,7 +846,7 @@ namespace MCUTerm.Controls
 
             int textPos = 0;
             int rowIndex = 0;
-            int maxWidth = (int)(ActualWidth / glyphHelper.Width);
+            int maxWidth = (int)((ActualWidth - Padding.Left - Padding.Right - _vScroll.ActualWidth) / glyphHelper.Width);
             while(rowIndex < rows.Count())
             {
                 Row row = rows[rowIndex];
@@ -864,15 +864,16 @@ namespace MCUTerm.Controls
 
                     if (wrapPoint <= wrapStopPoint)
                         wrapPoint = maxWidth;
+                    else
+                        wrapPoint++;
 
-                    wrapPoint++;
                     text.Insert(textPos + wrapPoint, "\n");
 
                     rows[rowIndex] = new Row();
                     rows.Insert(rowIndex + 1, new Row());
 
                     int copyElementsCount = row.glyphs.Count - wrapPoint;
-                    rows[rowIndex].glyphs.AddRange(row.glyphs.GetRange(0, wrapPoint - 1));
+                    rows[rowIndex].glyphs.AddRange(row.glyphs.GetRange(0, wrapPoint));
                     rows[rowIndex + 1].glyphs.AddRange(row.glyphs.GetRange(wrapPoint, copyElementsCount));
                 }
 
