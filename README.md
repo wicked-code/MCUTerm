@@ -23,7 +23,7 @@ Most of icons are from [Metro Studio](https://www.syncfusion.com/downloads/metro
 ![Options](Screenshots/Options.png)
 
 ## Downloads
-Visit [**release page**](https://github.com/wicked-code/MCUTerm/releases) to download the latest binary package (executable file) of MCUTerm program. Not ready yet. Sorry :flushed:
+Visit [**release page**](https://github.com/wicked-code/MCUTerm/releases) to download the latest binary package (executable file) of MCUTerm program.
 
 ## Usage details
 
