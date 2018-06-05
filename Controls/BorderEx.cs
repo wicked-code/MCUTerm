@@ -102,7 +102,7 @@ namespace MCUTerm.Controls
                 baseColor.A = (byte)Math.Round(minOpacity + (i * i) / growFactor);
 
                 Pen pen = new Pen(new SolidColorBrush(baseColor), 1.0 / dpiScaleX);
-                dc.DrawRectangle(null, pen, rect);
+                dc.DrawRoundedRectangle(null, pen, rect, dpiScaleX, dpiScaleX);
             }
         }
 
