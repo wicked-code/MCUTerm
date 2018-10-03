@@ -227,7 +227,7 @@
                 <Setter Property="Fill" TargetName="Glyph" Value="{StaticResource Menu.MenuItem.Disabled.Foreground}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="Icon" Property="Content" Value="{Binding (theme:Ext.DisabledImage), ElementName=Icon}"/>
+                <Setter TargetName="Icon" Property="Content" Value="{Binding Path=(theme:Ext.DisabledImage), ElementName=Icon}"/>
             </Trigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>

@@ -16,7 +16,7 @@
                         <ContentControl Name="ImageTemplate" IsTabStop="False"
                                         Width="{StaticResource SmallButton.Image.Size}" Height="{StaticResource SmallButton.Image.Size}"
                                         Margin="{Binding Path=Padding, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
-                                        Content="{Binding (theme:Ext.Image), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
+                                        Content="{Binding Path=(theme:Ext.Image), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
                                         />
                         <TextBlock Text="{TemplateBinding Content}" VerticalAlignment="Center"
                                     Margin="{Binding Path=Padding, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
@@ -24,7 +24,7 @@
                     <DataTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ImageTemplate" Property="Content"
-                                    Value="{Binding (theme:Ext.DisabledImage), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
+                                    Value="{Binding Path=(theme:Ext.DisabledImage), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
                         </Trigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
@@ -41,14 +41,14 @@
                     <StackPanel Orientation="Horizontal">
                         <ContentControl Name="ImageTemplate" IsTabStop="False" Margin="2,0"
                                         Width="{StaticResource SmallButton.Image.Size}" Height="{StaticResource SmallButton.Image.Size}"
-                                        Content="{Binding (theme:Ext.Image), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
+                                        Content="{Binding Path=(theme:Ext.Image), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
                                         />
                         <TextBlock Text="{TemplateBinding Content}" VerticalAlignment="Center" Margin="2,0"/>
                     </StackPanel>
                     <DataTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ImageTemplate" Property="Content"
-                                    Value="{Binding (theme:Ext.DisabledImage), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
+                                    Value="{Binding Path=(theme:Ext.DisabledImage), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
                         </Trigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
@@ -64,7 +64,7 @@
                     <StackPanel>
                         <ContentControl Name="ImageTemplate" IsTabStop="False" Margin="2"
                                         Width="{StaticResource BigButton.Image.Size}" Height="{StaticResource BigButton.Image.Size}"
-                                        Content="{Binding (theme:Ext.Image), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
+                                        Content="{Binding Path=(theme:Ext.Image), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"
                                         />
                         <TextBlock Name="CaptionText" Text="{TemplateBinding Content}" TextAlignment="Center" Margin="2,0"
                                    LineStackingStrategy="BlockLineHeight" LineHeight="14"/>
@@ -72,7 +72,7 @@
                     <DataTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ImageTemplate" Property="Content"
-                                    Value="{Binding (theme:Ext.DisabledImage), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
+                                    Value="{Binding Path=(theme:Ext.DisabledImage), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}"/>
                         </Trigger>
                         <Trigger Property="Content" Value="">
                             <Setter TargetName="CaptionText" Property="Visibility" Value="Collapsed"/>
